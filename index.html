@@ -50,7 +50,9 @@ svg text{fill:var(--mute);font-size:10px}
 .acts a{color:var(--c1);cursor:pointer}
 .empty{color:var(--mute);text-align:center;padding:24px 0}
 .status{font-size:.85rem;color:var(--c2);margin-top:10px}
-@media(max-width:520px){.ex{grid-template-columns:1fr 1fr 1fr 1fr}.ex input:first-child{grid-column:1/-1}}
+.tm{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr 1fr auto;gap:6px;margin-bottom:6px}
+.tm button{background:none;border:0;color:var(--bad);cursor:pointer;font-size:1.1rem}
+@media(max-width:520px){.tm{grid-template-columns:1fr 1fr 1fr}.tm select{grid-column:1/-1}.ex{grid-template-columns:1fr 1fr 1fr 1fr}.ex input:first-child{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -86,9 +88,12 @@ svg text{fill:var(--mute);font-size:10px}
   </div></div>
 
   <div class="card"><h2>🏋️ Evening — Gym</h2>
-    <div class="grid" style="margin-bottom:12px"><div><label>Gym kitni der (minute)</label><input type="number" id="gymMin" min="0"></div></div>
+    <div class="grid" style="margin-bottom:12px"><div><label>Gym kitni der (minute)</label><input type="number" id="gymMin" min="0"></div>
+      <div><label>Gym me kitni calories burn ki (treadmill mila kar)</label><input type="number" id="gymCal" min="0"></div></div>
     <label>Exercise (naam · sets · reps · kg)</label><div id="gymRows"></div>
-    <button class="btn g s" id="addEx">+ Exercise jodo</button></div>
+    <button class="btn g s" id="addEx">+ Exercise jodo</button>
+    <label style="margin-top:16px">🏃 Treadmill (type · minute · speed km/h · incline % · calories)</label><div id="tmRows"></div>
+    <button class="btn g s" id="addTm">+ Treadmill session jodo</button></div>
 
   <div class="card"><h2>🍽️ Dinner</h2><div class="grid">
     <div><label>Calories</label><input type="number" id="dinCal" min="0"></div>
@@ -124,6 +129,8 @@ svg text{fill:var(--mute);font-size:10px}
         <option value="run">Running (km)</option>
         <option value="walk">Walking (km)</option>
         <option value="gym">Gym (minute)</option>
+        <option value="burn">Calories: khayi vs gym burn</option>
+        <option value="tm">Treadmill (km: walk / run)</option>
         <option value="wake">Uthne ka time</option>
         <option value="time">Time: sahi use vs waste (ghante)</option>
       </select>
@@ -153,8 +160,8 @@ svg text{fill:var(--mute);font-size:10px}
 <script>
 const $=id=>document.getElementById(id);
 const LSK="routine_data_v1";
-const FIELDS=["wake","runKm","runMin","bfCal","bfFood","comment","lunchCal","lunchFood","gymMin","dinCal","dinFood","walkKm","walkMin","useH","wasteH","summary"];
-let entries={},gym=[];
+const FIELDS=["wake","runKm","runMin","bfCal","bfFood","comment","lunchCal","lunchFood","gymMin","gymCal","dinCal","dinFood","walkKm","walkMin","useH","wasteH","summary"];
+let entries={},gym=[],tm=[];
 const pad=n=>String(n).padStart(2,"0");
 const fmt=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const today=()=>fmt(new Date());
@@ -162,6 +169,10 @@ const num=v=>Number(v)||0;
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const dateTxt=(k,o)=>new Date(k+"T00:00").toLocaleDateString("hi-IN",o);
 const totCal=e=>num(e.bfCal)+num(e.lunchCal)+num(e.dinCal);
+const tmCal=e=>(e.tm||[]).reduce((s,x)=>s+num(x.c),0);
+const tmKm=(e,t)=>(e.tm||[]).filter(x=>!t||x.t===t).reduce((s,x)=>s+num(x.sp)*num(x.m)/60,0);
+const burn=e=>num(e.gymCal)||tmCal(e);
+const r1=v=>Math.round(v*10)/10;
 const wakeH=e=>{if(!e||!e.wake)return 0;const[h,m]=e.wake.split(":").map(Number);return h+m/60};
 const hhmm=h=>pad(Math.floor(h))+":"+pad(Math.round((h%1)*60));
 
@@ -190,20 +201,28 @@ function drawGym(){const box=$("gymRows");box.innerHTML="";
     ["n","s","r","w"].forEach((k,j)=>ins[j].oninput=()=>{x[k]=ins[j].value});
     r.querySelector("button").onclick=()=>{gym.splice(i,1);drawGym()};
     box.appendChild(r)});}
+function drawTm(){const box=$("tmRows");box.innerHTML="";
+  tm.forEach((x,i)=>{const r=document.createElement("div");r.className="tm";
+    r.innerHTML='<select><option value="walk">🚶 Walk</option><option value="run">🏃 Run</option></select><input type="number" placeholder="Minute" min="0"><input type="number" placeholder="km/h" min="0" step="0.1"><input type="number" placeholder="Incline %" min="0" step="0.5"><input type="number" placeholder="Calories" min="0"><button title="hatao">✕</button>';
+    const sel=r.querySelector("select");sel.value=x.t||"walk";x.t=sel.value;sel.onchange=()=>{x.t=sel.value;dirty=true};
+    const ins=r.querySelectorAll("input");["m","sp","inc","c"].forEach((k,j)=>{ins[j].value=x[k]??"";ins[j].oninput=()=>{x[k]=ins[j].value;updTot()}});
+    r.querySelector("button").onclick=()=>{tm.splice(i,1);drawTm();updTot()};
+    box.appendChild(r)});}
+$("addTm").onclick=()=>{tm.push({t:"walk",m:"",sp:"",inc:"",c:""});drawTm()};
 $("addEx").onclick=()=>{gym.push({n:"",s:"",r:"",w:""});drawGym()};
 
 /* form */
-function updTot(){const e={bfCal:$("bfCal").value,lunchCal:$("lunchCal").value,dinCal:$("dinCal").value};
+function updTot(){const e={bfCal:$("bfCal").value,lunchCal:$("lunchCal").value,dinCal:$("dinCal").value,gymCal:$("gymCal").value,tm};
   const u=num($("useH").value),w=num($("wasteH").value);
-  $("totals").textContent="🔥 Kul calories: "+totCal(e)+" kcal"+((u||w)?"   ·   ⏱ Sahi use: "+u+"h, Waste: "+w+"h":"");}
+  $("totals").textContent="🔥 Kul calories khayi: "+totCal(e)+" kcal"+(burn(e)?"   ·   🏋️ Gym burn: "+burn(e)+" kcal":"")+((u||w)?"   ·   ⏱ Sahi use: "+u+"h, Waste: "+w+"h":"");}
 document.querySelectorAll("#v-today input,#v-today textarea").forEach(i=>i.addEventListener("input",updTot));
 function fill(d){const e=entries[d]||{};FIELDS.forEach(k=>$(k).value=e[k]??"");
-  gym=JSON.parse(JSON.stringify(e.gym||[]));drawGym();updTot();}
+  gym=JSON.parse(JSON.stringify(e.gym||[]));drawGym();tm=JSON.parse(JSON.stringify(e.tm||[]));drawTm();updTot();}
 $("date").value=today();
 $("date").onchange=()=>{fill($("date").value);$("status").textContent=""};
 $("clear").onclick=()=>{$("date").value=today();fill("__none__");$("status").textContent=""};
 $("save").onclick=()=>{const d=$("date").value;if(!d){alert("Date chuno");return}
-  const e={};FIELDS.forEach(k=>e[k]=$(k).value);e.gym=gym.filter(x=>x.n||x.s||x.r||x.w);
+  const e={};FIELDS.forEach(k=>e[k]=$(k).value);e.gym=gym.filter(x=>x.n||x.s||x.r||x.w);e.tm=tm.filter(x=>x.m||x.sp||x.c);
   e.updated=Date.now();entries[d]=e;lsSave();dirty=false;$("status").textContent="✅ Save ho gaya. History aur Graph me dekh sakte ho.";cloudPush(d,e);};
 
 /* chart */
@@ -229,6 +248,8 @@ function renderGraph(){
   else if(m==="run")series=[S("Running km","var(--c1)",e=>num(e.runKm))];
   else if(m==="walk")series=[S("Walking km","var(--c2)",e=>num(e.walkKm))];
   else if(m==="gym")series=[S("Gym minute","var(--c3)",e=>num(e.gymMin))];
+  else if(m==="burn")series=[S("Khayi (intake)","var(--c1)",totCal),S("Gym burn","var(--c2)",burn)];
+  else if(m==="tm"){series=[S("Walk km","var(--c2)",e=>r1(tmKm(e,"walk"))),S("Run km","var(--c1)",e=>r1(tmKm(e,"run")))];o.stacked=true}
   else if(m==="wake"){series=[S("Uthne ka time","var(--c4)",e=>wakeH(e))];o.yfmt=hhmm}
   else series=[S("Sahi use","var(--c2)",e=>num(e.useH)),S("Waste","var(--bad)",e=>num(e.wasteH))];
   $("chart").innerHTML=chart(days,series,o);
@@ -236,7 +257,7 @@ function renderGraph(){
   const have=E.filter(e=>Object.keys(e).length);const avg=f=>have.length?Math.round(have.reduce((s,e)=>s+f(e),0)/have.length*10)/10:"–";
   const sum=f=>Math.round(have.reduce((s,e)=>s+f(e),0)*10)/10;
   const W=have.filter(e=>e.wake);
-  const items=[[have.length+"/"+n,"Entry wale din"],[avg(totCal)+" kcal","Avg calories/din"],[sum(e=>num(e.runKm))+" km","Total running"],[sum(e=>num(e.walkKm))+" km","Total walking"],[avg(e=>num(e.useH))+"h","Avg sahi use"],[avg(e=>num(e.wasteH))+"h","Avg waste"],[W.length?hhmm(W.reduce((s,e)=>s+wakeH(e),0)/W.length):"–","Avg uthne ka time"]];
+  const items=[[have.length+"/"+n,"Entry wale din"],[avg(totCal)+" kcal","Avg calories/din"],[sum(e=>num(e.runKm))+" km","Total running"],[sum(e=>num(e.walkKm))+" km","Total walking"],[avg(burn)+" kcal","Avg gym burn"],[avg(e=>num(e.useH))+"h","Avg sahi use"],[avg(e=>num(e.wasteH))+"h","Avg waste"],[W.length?hhmm(W.reduce((s,e)=>s+wakeH(e),0)/W.length):"–","Avg uthne ka time"]];
   $("stats").innerHTML=items.map(x=>'<div class="stat"><b>'+x[0]+'</b><span>'+x[1]+' · '+n+' din</span></div>').join("");}
 $("gsel").onchange=renderGraph;$("grng").onchange=renderGraph;
 
@@ -258,6 +279,8 @@ function renderHistory(){
      +L("📝 Comment",esc(e.comment))
      +L("🍛 Lunch",(e.lunchCal?esc(e.lunchCal)+" kcal":"")+(e.lunchFood?" — "+esc(e.lunchFood):""))
      +L("🏋️ Gym",(e.gymMin?esc(e.gymMin)+" min · ":"")+gy)
+     +L("🔥 Gym burn",e.gymCal?esc(e.gymCal)+" kcal":"")
+     +L("🏃 Treadmill",(e.tm||[]).map(x=>(x.t==="run"?"Run ":"Walk ")+num(x.m)+" min @ "+num(x.sp)+" km/h"+(num(x.inc)?", incline "+num(x.inc)+"%":"")+(num(x.c)?" · "+num(x.c)+" kcal":"")).join("<br>"))
      +L("🍽️ Dinner",(e.dinCal?esc(e.dinCal)+" kcal":"")+(e.dinFood?" — "+esc(e.dinFood):""))
      +L("🚶 Walking",(e.walkKm?esc(e.walkKm)+" km":"")+(e.walkMin?" / "+esc(e.walkMin)+" min":""))
      +L("🔥 Kul calories",totCal(e)?totCal(e)+" kcal":"")
@@ -275,8 +298,8 @@ $("bk").onclick=()=>dlFile("routine-backup.json",JSON.stringify(entries),"applic
 $("rs").onclick=()=>$("rf").click();
 $("rf").onchange=()=>{const f=$("rf").files[0];if(!f)return;const r=new FileReader();
   r.onload=()=>{try{entries=Object.assign(entries,JSON.parse(r.result));lsSave();renderHistory();alert("Restore ho gaya ✅")}catch(e){alert("File sahi nahi hai")}};r.readAsText(f)};
-$("csv").onclick=()=>{const h=["date",...FIELDS,"gym","total_cal"];
-  const rows=[h].concat(Object.keys(entries).sort().map(k=>{const e=entries[k];return [k,...FIELDS.map(f=>e[f]),(e.gym||[]).map(x=>[x.n,x.s,x.r,x.w].join("/")).join("|"),totCal(e)]}));
+$("csv").onclick=()=>{const h=["date",...FIELDS,"gym","treadmill","total_cal"];
+  const rows=[h].concat(Object.keys(entries).sort().map(k=>{const e=entries[k];return [k,...FIELDS.map(f=>e[f]),(e.gym||[]).map(x=>[x.n,x.s,x.r,x.w].join("/")).join("|"),(e.tm||[]).map(x=>[x.t,x.m,x.sp,x.inc,x.c].join("/")).join("|"),totCal(e)]}));
   dlFile("routine.csv","\ufeff"+rows.map(r=>r.map(x=>'"'+String(x??"").replace(/"/g,'""')+'"').join(",")).join("\n"),"text/csv")};
 
 /* cloud sync (Google Apps Script) */
