@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>मेरी दिनचर्या</title>
+<style>
+:root{--bg:#f6f3ee;--card:#fff;--ink:#27251f;--mute:#7b756a;--line:#e7e1d6;--soft:#efe9df;--c1:#d9582b;--c2:#2f7d5b;--c3:#3b6fd4;--c4:#b8860b;--bad:#c0392b}
+:root[data-theme="dark"]{--bg:#171614;--card:#232120;--ink:#f1ede6;--mute:#a49e93;--line:#38352f;--soft:#2c2a26;--c1:#f07a4d;--c2:#4fb98a;--c3:#6f9bf0;--c4:#e0b040;--bad:#ef6a5a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+header{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--line);z-index:5}
+.bar{max-width:860px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.logo{font-weight:700}
+nav{display:flex;gap:4px}
+nav a{padding:7px 13px;border-radius:999px;color:var(--mute);font-size:.9rem;font-weight:600;cursor:pointer}
+nav a.on{background:var(--c1);color:#fff}
+.ib{background:var(--soft);border:0;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1rem}
+main{max-width:860px;margin:0 auto;padding:18px 16px 70px}
+.view{display:none}.view.on{display:block}
+h1{font-size:1.4rem;margin:0}
+h2{font-size:1rem;margin:0 0 12px}
+.sub{color:var(--mute);font-size:.9rem;margin:2px 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:block;font-size:.8rem;color:var(--mute);margin-bottom:4px}
+input,textarea,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+textarea{min-height:90px;resize:vertical}
+.btn{background:var(--c1);color:#fff;border:0;border-radius:10px;padding:11px 18px;font:inherit;font-weight:600;cursor:pointer}
+.btn.g{background:var(--soft);color:var(--ink)}
+.btn.s{padding:7px 12px;font-size:.85rem}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ex{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:6px;margin-bottom:6px}
+.ex button{background:none;border:0;color:var(--bad);cursor:pointer;font-size:1.1rem}
+.tot{font-weight:700;color:var(--c1)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.stat b{display:block;font-size:1.4rem}
+.stat span{color:var(--mute);font-size:.8rem}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;margin-top:8px}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+svg text{fill:var(--mute);font-size:10px}
+.tl{border-left:2px solid var(--line);margin-left:6px;padding-left:16px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px;position:relative}
+.item::before{content:"";position:absolute;left:-23px;top:18px;width:10px;height:10px;border-radius:50%;background:var(--c1)}
+.item h3{margin:0 0 6px;font-size:.95rem}
+.ln{font-size:.86rem;margin:3px 0}
+.ln b{color:var(--mute);font-weight:600}
+.acts{margin-top:8px;display:flex;gap:14px;font-size:.8rem}
+.acts a{color:var(--c1);cursor:pointer}
+.empty{color:var(--mute);text-align:center;padding:24px 0}
+.status{font-size:.85rem;color:var(--c2);margin-top:10px}
+@media(max-width:520px){.ex{grid-template-columns:1fr 1fr 1fr 1fr}.ex input:first-child{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <div class="logo">📒 मेरी दिनचर्या</div>
+  <nav><a data-v="today">Aaj</a><a data-v="graph">Graph</a><a data-v="history">History</a></nav>
+  <button class="ib" id="mode">🌙</button>
+</div></header>
+<main>
+
+<!-- AAJ -->
+<section class="view" id="v-today">
+  <h1>Aaj ka record</h1><div class="sub">Din ke hisaab se upar se neeche bharte jao.</div>
+  <div class="card"><label>Date</label><input type="date" id="date"></div>
+
+  <div class="card"><h2>🌅 Subah</h2><div class="grid">
+    <div><label>Kitne baje uthe</label><input type="time" id="wake"></div>
+    <div><label>Running (km)</label><input type="number" id="runKm" min="0" step="0.1"></div>
+    <div><label>Running time (minute)</label><input type="number" id="runMin" min="0"></div>
+  </div></div>
+
+  <div class="card"><h2>🍳 Breakfast</h2><div class="grid">
+    <div><label>Calories</label><input type="number" id="bfCal" min="0"></div>
+    <div><label>Kya khaya</label><input id="bfFood"></div>
+  </div></div>
+
+  <div class="card"><h2>📝 Din bhar kya kya kiya (comment)</h2>
+    <textarea id="comment" placeholder="Breakfast ke baad se lunch tak kya kiya..."></textarea></div>
+
+  <div class="card"><h2>🍛 Lunch</h2><div class="grid">
+    <div><label>Calories</label><input type="number" id="lunchCal" min="0"></div>
+    <div><label>Kya khaya</label><input id="lunchFood"></div>
+  </div></div>
+
+  <div class="card"><h2>🏋️ Evening — Gym</h2>
+    <div class="grid" style="margin-bottom:12px"><div><label>Gym kitni der (minute)</label><input type="number" id="gymMin" min="0"></div></div>
+    <label>Exercise (naam · sets · reps · kg)</label><div id="gymRows"></div>
+    <button class="btn g s" id="addEx">+ Exercise jodo</button></div>
+
+  <div class="card"><h2>🍽️ Dinner</h2><div class="grid">
+    <div><label>Calories</label><input type="number" id="dinCal" min="0"></div>
+    <div><label>Kya khaya</label><input id="dinFood"></div>
+  </div></div>
+
+  <div class="card"><h2>🚶 Walking</h2><div class="grid">
+    <div><label>Walking (km)</label><input type="number" id="walkKm" min="0" step="0.1"></div>
+    <div><label>Walking time (minute)</label><input type="number" id="walkMin" min="0"></div>
+  </div></div>
+
+  <div class="card"><h2>📊 Summary</h2><div class="grid">
+    <div><label>Kitna time sahi use kiya (ghante)</label><input type="number" id="useH" min="0" step="0.5"></div>
+    <div><label>Kitna time waste hua (ghante)</label><input type="number" id="wasteH" min="0" step="0.5"></div>
+  </div>
+    <label style="margin-top:12px">Aaj ka summary</label>
+    <textarea id="summary" placeholder="Aaj ka din kaisa raha, kal kya sudhaarna hai..."></textarea>
+    <div style="margin-top:12px" class="tot" id="totals"></div>
+  </div>
+
+  <div class="row"><button class="btn" id="save">💾 Save karo</button><button class="btn g" id="clear">Naya / Clear</button></div>
+  <div class="status" id="status"></div>
+</section>
+
+<!-- GRAPH -->
+<section class="view" id="v-graph">
+  <h1>Graph</h1><div class="sub">Jitni entries hongi, graph utna bharega.</div>
+  <div class="stats" id="stats"></div>
+  <div class="card">
+    <div class="row" style="margin-bottom:12px">
+      <select id="gsel" style="flex:2">
+        <option value="cal">Calories (breakfast / lunch / dinner)</option>
+        <option value="run">Running (km)</option>
+        <option value="walk">Walking (km)</option>
+        <option value="gym">Gym (minute)</option>
+        <option value="wake">Uthne ka time</option>
+        <option value="time">Time: sahi use vs waste (ghante)</option>
+      </select>
+      <select id="grng" style="flex:1"><option value="7">7 din</option><option value="14">14 din</option><option value="30">30 din</option></select>
+    </div>
+    <div id="chart"></div><div class="leg" id="leg"></div>
+  </div>
+</section>
+
+<!-- HISTORY -->
+<section class="view" id="v-history">
+  <h1>History</h1><div class="sub" id="hsub"></div>
+  <div class="row" style="margin-bottom:14px">
+    <select id="month" style="flex:1;min-width:140px"></select>
+    <button class="btn g s" id="csv">⬇ CSV</button><button class="btn g s" id="bk">💾 Backup</button>
+    <button class="btn g s" id="rs">📂 Restore</button><input type="file" id="rf" accept=".json" hidden>
+  </div>
+  <div class="card" id="cloud"><h2>☁️ Google Sheet me save (cloud)</h2>
+    <label>Web App URL (Apps Script se milega)</label><input id="cUrl" placeholder="https://script.google.com/macros/s/.../exec">
+    <label style="margin-top:10px">Secret password (jo script me likha)</label><input id="cKey" type="password">
+    <div class="row" style="margin-top:10px"><button class="btn s" id="cSave">Jodo &amp; Sync</button><button class="btn g s" id="cSync">Sync abhi</button></div>
+    <div class="status" id="cStat" style="color:var(--mute)"></div></div>
+  <div class="tl" id="tl"></div>
+</section>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const LSK="routine_data_v1";
+const FIELDS=["wake","runKm","runMin","bfCal","bfFood","comment","lunchCal","lunchFood","gymMin","dinCal","dinFood","walkKm","walkMin","useH","wasteH","summary"];
+let entries={},gym=[];
+const pad=n=>String(n).padStart(2,"0");
+const fmt=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const today=()=>fmt(new Date());
+const num=v=>Number(v)||0;
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const dateTxt=(k,o)=>new Date(k+"T00:00").toLocaleDateString("hi-IN",o);
+const totCal=e=>num(e.bfCal)+num(e.lunchCal)+num(e.dinCal);
+const wakeH=e=>{if(!e||!e.wake)return 0;const[h,m]=e.wake.split(":").map(Number);return h+m/60};
+const hhmm=h=>pad(Math.floor(h))+":"+pad(Math.round((h%1)*60));
+
+function lsLoad(){try{return JSON.parse(localStorage.getItem(LSK)||"{}")}catch(e){return{}}}
+function lsSave(){try{localStorage.setItem(LSK,JSON.stringify(entries))}catch(e){alert("Browser me save nahi ho paya. Backup le lo.")}}
+
+/* navigation */
+function go(){const h=location.hash.slice(1),v=["today","graph","history"].includes(h)?h:"today";
+  document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
+  document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));
+  if(v==="graph")renderGraph();if(v==="history")renderHistory();}
+document.querySelectorAll("nav a").forEach(a=>a.onclick=()=>{location.hash=a.dataset.v});
+addEventListener("hashchange",go);
+
+/* theme */
+function setTheme(t){document.documentElement.dataset.theme=t;$("mode").textContent=t==="dark"?"☀️":"🌙";try{localStorage.setItem("routine_theme",t)}catch(e){}}
+let th=null;try{th=localStorage.getItem("routine_theme")}catch(e){}
+setTheme(th||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));
+$("mode").onclick=()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark");
+
+/* gym rows */
+function drawGym(){const box=$("gymRows");box.innerHTML="";
+  gym.forEach((x,i)=>{const r=document.createElement("div");r.className="ex";
+    r.innerHTML='<input placeholder="Exercise" value="'+esc(x.n)+'"><input type="number" placeholder="Sets" value="'+esc(x.s)+'"><input type="number" placeholder="Reps" value="'+esc(x.r)+'"><input type="number" placeholder="kg" value="'+esc(x.w)+'"><button title="hatao">✕</button>';
+    const ins=r.querySelectorAll("input");
+    ["n","s","r","w"].forEach((k,j)=>ins[j].oninput=()=>{x[k]=ins[j].value});
+    r.querySelector("button").onclick=()=>{gym.splice(i,1);drawGym()};
+    box.appendChild(r)});}
+$("addEx").onclick=()=>{gym.push({n:"",s:"",r:"",w:""});drawGym()};
+
+/* form */
+function updTot(){const e={bfCal:$("bfCal").value,lunchCal:$("lunchCal").value,dinCal:$("dinCal").value};
+  const u=num($("useH").value),w=num($("wasteH").value);
+  $("totals").textContent="🔥 Kul calories: "+totCal(e)+" kcal"+((u||w)?"   ·   ⏱ Sahi use: "+u+"h, Waste: "+w+"h":"");}
+document.querySelectorAll("#v-today input,#v-today textarea").forEach(i=>i.addEventListener("input",updTot));
+function fill(d){const e=entries[d]||{};FIELDS.forEach(k=>$(k).value=e[k]??"");
+  gym=JSON.parse(JSON.stringify(e.gym||[]));drawGym();updTot();}
+$("date").value=today();
+$("date").onchange=()=>{fill($("date").value);$("status").textContent=""};
+$("clear").onclick=()=>{$("date").value=today();fill("__none__");$("status").textContent=""};
+$("save").onclick=()=>{const d=$("date").value;if(!d){alert("Date chuno");return}
+  const e={};FIELDS.forEach(k=>e[k]=$(k).value);e.gym=gym.filter(x=>x.n||x.s||x.r||x.w);
+  e.updated=Date.now();entries[d]=e;lsSave();dirty=false;$("status").textContent="✅ Save ho gaya. History aur Graph me dekh sakte ho.";cloudPush(d,e);};
+
+/* chart */
+function chart(days,series,o){
+  const W=600,H=230,L=34,B=24,T=14,iw=W-L-6,ih=H-T-B;
+  const n=days.length,gw=iw/n,k=o.stacked?1:series.length,bw=Math.min(28,gw*0.7/k);
+  const tot=days.map((_,i)=>o.stacked?series.reduce((s,x)=>s+x.vals[i],0):Math.max(...series.map(x=>x.vals[i])));
+  let mx=Math.max(...tot,1);mx=Math.ceil(mx*1.1);
+  let g='';
+  for(let t=0;t<=4;t++){const y=T+ih-ih*t/4;g+='<line x1="'+L+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="var(--line)"/><text x="'+(L-4)+'" y="'+(y+3)+'" text-anchor="end">'+(o.yfmt?o.yfmt(mx*t/4):Math.round(mx*t/4*10)/10)+'</text>'}
+  days.forEach((d,i)=>{const cx=L+gw*i+gw/2;let acc=0;
+    series.forEach((s,j)=>{const v=s.vals[i];if(!v)return;const h=ih*v/mx;
+      const x=o.stacked?cx-bw/2:cx-bw*k/2+bw*j;const y=o.stacked?T+ih-ih*acc/mx-h:T+ih-h;
+      g+='<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+h+'" rx="3" fill="'+s.color+'"><title>'+d+': '+(o.yfmt?o.yfmt(v):v)+'</title></rect>';
+      if(o.stacked)acc+=v});
+    if(n<=14||i%2===0)g+='<text x="'+cx+'" y="'+(H-8)+'" text-anchor="middle">'+d.slice(8)+'</text>'});
+  return '<svg viewBox="0 0 '+W+' '+H+'" width="100%">'+g+'</svg>';}
+function renderGraph(){
+  const n=num($("grng").value),days=[];for(let i=n-1;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(fmt(d))}
+  const E=days.map(k=>entries[k]||{}),m=$("gsel").value;let series,o={};
+  const S=(name,color,f)=>({name,color,vals:E.map(f)});
+  if(m==="cal"){series=[S("Breakfast","var(--c4)",e=>num(e.bfCal)),S("Lunch","var(--c1)",e=>num(e.lunchCal)),S("Dinner","var(--c3)",e=>num(e.dinCal))];o.stacked=true}
+  else if(m==="run")series=[S("Running km","var(--c1)",e=>num(e.runKm))];
+  else if(m==="walk")series=[S("Walking km","var(--c2)",e=>num(e.walkKm))];
+  else if(m==="gym")series=[S("Gym minute","var(--c3)",e=>num(e.gymMin))];
+  else if(m==="wake"){series=[S("Uthne ka time","var(--c4)",e=>wakeH(e))];o.yfmt=hhmm}
+  else series=[S("Sahi use","var(--c2)",e=>num(e.useH)),S("Waste","var(--bad)",e=>num(e.wasteH))];
+  $("chart").innerHTML=chart(days,series,o);
+  $("leg").innerHTML=series.map(s=>'<span><i style="background:'+s.color+'"></i>'+s.name+'</span>').join("");
+  const have=E.filter(e=>Object.keys(e).length);const avg=f=>have.length?Math.round(have.reduce((s,e)=>s+f(e),0)/have.length*10)/10:"–";
+  const sum=f=>Math.round(have.reduce((s,e)=>s+f(e),0)*10)/10;
+  const W=have.filter(e=>e.wake);
+  const items=[[have.length+"/"+n,"Entry wale din"],[avg(totCal)+" kcal","Avg calories/din"],[sum(e=>num(e.runKm))+" km","Total running"],[sum(e=>num(e.walkKm))+" km","Total walking"],[avg(e=>num(e.useH))+"h","Avg sahi use"],[avg(e=>num(e.wasteH))+"h","Avg waste"],[W.length?hhmm(W.reduce((s,e)=>s+wakeH(e),0)/W.length):"–","Avg uthne ka time"]];
+  $("stats").innerHTML=items.map(x=>'<div class="stat"><b>'+x[0]+'</b><span>'+x[1]+' · '+n+' din</span></div>').join("");}
+$("gsel").onchange=renderGraph;$("grng").onchange=renderGraph;
+
+/* history */
+function renderHistory(){
+  const keys=Object.keys(entries).sort().reverse(),months=[...new Set(keys.map(k=>k.slice(0,7)))],cur=$("month").value||"all";
+  $("month").innerHTML='<option value="all">Saare mahine</option>'+months.map(m=>'<option value="'+m+'">'+dateTxt(m+"-01",{month:"long",year:"numeric"})+'</option>').join("");
+  $("month").value=months.includes(cur)?cur:"all";
+  const shown=keys.filter(k=>$("month").value==="all"||k.startsWith($("month").value));
+  $("hsub").textContent=shown.length+" entries";
+  $("tl").innerHTML=shown.length?"":'<div class="empty">Abhi koi entry nahi. "Aaj" tab me pehli entry karo.</div>';
+  shown.forEach(k=>{const e=entries[k],it=document.createElement("div");it.className="item";
+    const L=(a,b)=>b?'<div class="ln"><b>'+a+':</b> '+b+'</div>':'';
+    const gy=(e.gym||[]).map(x=>esc(x.n)+(x.s||x.r?" "+esc(x.s||"?")+"×"+esc(x.r||"?"):"")+(x.w?" @"+esc(x.w)+"kg":"")).join(", ");
+    it.innerHTML='<h3>'+dateTxt(k,{weekday:"long",day:"numeric",month:"short",year:"numeric"})+'</h3>'
+     +L("🌅 Uthe",esc(e.wake))
+     +L("🏃 Running",(e.runKm?esc(e.runKm)+" km":"")+(e.runMin?" / "+esc(e.runMin)+" min":""))
+     +L("🍳 Breakfast",(e.bfCal?esc(e.bfCal)+" kcal":"")+(e.bfFood?" — "+esc(e.bfFood):""))
+     +L("📝 Comment",esc(e.comment))
+     +L("🍛 Lunch",(e.lunchCal?esc(e.lunchCal)+" kcal":"")+(e.lunchFood?" — "+esc(e.lunchFood):""))
+     +L("🏋️ Gym",(e.gymMin?esc(e.gymMin)+" min · ":"")+gy)
+     +L("🍽️ Dinner",(e.dinCal?esc(e.dinCal)+" kcal":"")+(e.dinFood?" — "+esc(e.dinFood):""))
+     +L("🚶 Walking",(e.walkKm?esc(e.walkKm)+" km":"")+(e.walkMin?" / "+esc(e.walkMin)+" min":""))
+     +L("🔥 Kul calories",totCal(e)?totCal(e)+" kcal":"")
+     +L("⏱ Time",(e.useH||e.wasteH)?"Sahi use "+num(e.useH)+"h · Waste "+num(e.wasteH)+"h":"")
+     +L("📊 Summary",esc(e.summary))
+     +'<div class="acts"><a class="ed">Edit</a><a class="dl">Delete</a></div>';
+    it.querySelector(".ed").onclick=()=>{$("date").value=k;fill(k);location.hash="today";scrollTo(0,0)};
+    it.querySelector(".dl").onclick=()=>{if(confirm(k+" ki entry delete karein?")){delete entries[k];lsSave();renderHistory();cloudDel(k)}};
+    $("tl").appendChild(it)});}
+$("month").onchange=renderHistory;
+
+/* export / import */
+function dlFile(n,t,m){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:m+";charset=utf-8"}));a.download=n;a.click()}
+$("bk").onclick=()=>dlFile("routine-backup.json",JSON.stringify(entries),"application/json");
+$("rs").onclick=()=>$("rf").click();
+$("rf").onchange=()=>{const f=$("rf").files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{entries=Object.assign(entries,JSON.parse(r.result));lsSave();renderHistory();alert("Restore ho gaya ✅")}catch(e){alert("File sahi nahi hai")}};r.readAsText(f)};
+$("csv").onclick=()=>{const h=["date",...FIELDS,"gym","total_cal"];
+  const rows=[h].concat(Object.keys(entries).sort().map(k=>{const e=entries[k];return [k,...FIELDS.map(f=>e[f]),(e.gym||[]).map(x=>[x.n,x.s,x.r,x.w].join("/")).join("|"),totCal(e)]}));
+  dlFile("routine.csv","\ufeff"+rows.map(r=>r.map(x=>'"'+String(x??"").replace(/"/g,'""')+'"').join(",")).join("\n"),"text/csv")};
+
+/* cloud sync (Google Apps Script) */
+let dirty=false;document.addEventListener("input",e=>{if(e.target.closest("#v-today"))dirty=true});
+let cfg={url:"",key:""};try{Object.assign(cfg,JSON.parse(localStorage.getItem("routine_cloud")||"{}"))}catch(e){}
+$("cUrl").value=cfg.url||"";$("cKey").value=cfg.key||"";
+const cmsg=t=>{$("cStat").textContent=t};
+async function cPost(b){const r=await fetch(cfg.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({key:cfg.key},b))});
+  const j=await r.json();if(j.error)throw new Error("password galat");return j}
+async function cloudPush(d,e){if(!cfg.url)return;try{await cPost({action:"save",date:d,entry:e});cmsg("☁️ Cloud me bhi save ho gaya ✅")}catch(x){cmsg("⚠️ Cloud save fail — baad me 'Sync abhi' dabao")}}
+async function cloudDel(d){if(!cfg.url)return;try{await cPost({action:"delete",date:d})}catch(x){}}
+async function cloudSync(){if(!cfg.url)return;cmsg("Sync ho raha hai...");
+  try{const r=await fetch(cfg.url+"?key="+encodeURIComponent(cfg.key));const c=await r.json();if(c.error)throw new Error("password galat");
+    Object.keys(c).forEach(k=>{if(!entries[k]||num(c[k].updated)>num(entries[k].updated))entries[k]=c[k]});
+    for(const k of Object.keys(entries)){if(!c[k]||num(entries[k].updated)>num(c[k].updated))await cPost({action:"save",date:k,entry:entries[k]})}
+    lsSave();if(!dirty)fill($("date").value);renderHistory();renderGraph();cmsg("☁️ Sync ho gaya — "+Object.keys(entries).length+" entries")}
+  catch(x){cmsg("⚠️ Sync fail: "+x.message+" (URL aur password check karo)")}}
+$("cSave").onclick=()=>{cfg={url:$("cUrl").value.trim(),key:$("cKey").value};try{localStorage.setItem("routine_cloud",JSON.stringify(cfg))}catch(e){}cloudSync()};
+$("cSync").onclick=cloudSync;
+
+
+entries=lsLoad();fill(today());go();cloudSync();
+</script>
+</body>
+</html>
