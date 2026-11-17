@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>मेरी दिनचर्या</title>
+<title>My Daily Routine</title>
 <style>
 :root{--bg:#f6f3ee;--card:#fff;--ink:#27251f;--mute:#7b756a;--line:#e7e1d6;--soft:#efe9df;--c1:#d9582b;--c2:#2f7d5b;--c3:#3b6fd4;--c4:#b8860b;--bad:#c0392b}
 :root[data-theme="dark"]{--bg:#171614;--card:#232120;--ink:#f1ede6;--mute:#a49e93;--line:#38352f;--soft:#2c2a26;--c1:#f07a4d;--c2:#4fb98a;--c3:#6f9bf0;--c4:#e0b040;--bad:#ef6a5a}
@@ -57,70 +57,74 @@ svg text{fill:var(--mute);font-size:10px}
 </head>
 <body>
 <header><div class="bar">
-  <div class="logo">📒 मेरी दिनचर्या</div>
-  <nav><a data-v="today">Aaj</a><a data-v="graph">Graph</a><a data-v="history">History</a></nav>
+  <div class="logo">📒 My Daily Routine</div>
+  <nav><a data-v="today">Today</a><a data-v="graph">Graph</a><a data-v="history">History</a></nav>
   <button class="ib" id="mode">🌙</button>
 </div></header>
 <main>
 
 <!-- AAJ -->
 <section class="view" id="v-today">
-  <h1>Aaj ka record</h1><div class="sub">Din ke hisaab se upar se neeche bharte jao.</div>
+  <h1>Today's record</h1><div class="sub">Fill it in from top to bottom, in the order of your day.</div>
   <div class="card"><label>Date</label><input type="date" id="date"></div>
 
-  <div class="card"><h2>🌅 Subah</h2><div class="grid">
-    <div><label>Kitne baje uthe</label><input type="time" id="wake"></div>
+  <div class="card"><h2>🌅 Morning</h2><div class="grid">
+    <div><label>Wake-up time</label><input type="time" id="wake"></div>
     <div><label>Running (km)</label><input type="number" id="runKm" min="0" step="0.1"></div>
-    <div><label>Running time (minute)</label><input type="number" id="runMin" min="0"></div>
+    <div><label>Running time (minutes)</label><input type="number" id="runMin" min="0"></div>
   </div></div>
 
   <div class="card"><h2>🍳 Breakfast</h2><div class="grid">
     <div><label>Calories</label><input type="number" id="bfCal" min="0"></div>
-    <div><label>Kya khaya</label><input id="bfFood"></div>
+    <div><label>What did you eat</label><input id="bfFood"></div>
   </div></div>
 
-  <div class="card"><h2>📝 Din bhar kya kya kiya (comment)</h2>
-    <textarea id="comment" placeholder="Breakfast ke baad se lunch tak kya kiya..."></textarea></div>
+  <div class="card"><h2>📝 What I did during the day (comment)</h2>
+    <textarea id="comment" placeholder="What did you do between breakfast and lunch..."></textarea></div>
 
   <div class="card"><h2>🍛 Lunch</h2><div class="grid">
     <div><label>Calories</label><input type="number" id="lunchCal" min="0"></div>
-    <div><label>Kya khaya</label><input id="lunchFood"></div>
+    <div><label>What did you eat</label><input id="lunchFood"></div>
   </div></div>
 
   <div class="card"><h2>🏋️ Evening — Gym</h2>
-    <div class="grid" style="margin-bottom:12px"><div><label>Gym kitni der (minute)</label><input type="number" id="gymMin" min="0"></div>
-      <div><label>Gym me kitni calories burn ki (treadmill mila kar)</label><input type="number" id="gymCal" min="0"></div></div>
-    <label>Exercise (naam · sets · reps · kg)</label><div id="gymRows"></div>
-    <button class="btn g s" id="addEx">+ Exercise jodo</button>
-    <label style="margin-top:16px">🏃 Treadmill (type · minute · speed km/h · incline % · calories)</label><div id="tmRows"></div>
-    <button class="btn g s" id="addTm">+ Treadmill session jodo</button></div>
+    <div class="grid" style="margin-bottom:12px"><div><label>Gym duration (minutes)</label><input type="number" id="gymMin" min="0"></div>
+      <div><label>Calories burned in gym (including treadmill)</label><input type="number" id="gymCal" min="0"></div></div>
+    <label>Exercises (name · sets · reps · kg)</label><div id="gymRows"></div>
+    <button class="btn g s" id="addEx">+ Add exercise</button>
+    <label style="margin-top:16px">🏃 Treadmill (type · minutes · speed km/h · incline % · calories)</label><div id="tmRows"></div>
+    <button class="btn g s" id="addTm">+ Add treadmill session</button></div>
 
   <div class="card"><h2>🍽️ Dinner</h2><div class="grid">
     <div><label>Calories</label><input type="number" id="dinCal" min="0"></div>
-    <div><label>Kya khaya</label><input id="dinFood"></div>
+    <div><label>What did you eat</label><input id="dinFood"></div>
   </div></div>
 
   <div class="card"><h2>🚶 Walking</h2><div class="grid">
     <div><label>Walking (km)</label><input type="number" id="walkKm" min="0" step="0.1"></div>
-    <div><label>Walking time (minute)</label><input type="number" id="walkMin" min="0"></div>
+    <div><label>Walking time (minutes)</label><input type="number" id="walkMin" min="0"></div>
   </div></div>
 
+  <div class="card"><h2>🔥 Daily calories</h2>
+    <label>Body's base burn (BMR), kcal per day. Usually 1800–2000. It is remembered for the next days.</label>
+    <input type="number" id="bmr" min="0" placeholder="e.g. 1800"></div>
+
   <div class="card"><h2>📊 Summary</h2><div class="grid">
-    <div><label>Kitna time sahi use kiya (ghante)</label><input type="number" id="useH" min="0" step="0.5"></div>
-    <div><label>Kitna time waste hua (ghante)</label><input type="number" id="wasteH" min="0" step="0.5"></div>
+    <div><label>Time used well (hours)</label><input type="number" id="useH" min="0" step="0.5"></div>
+    <div><label>Time wasted (hours)</label><input type="number" id="wasteH" min="0" step="0.5"></div>
   </div>
-    <label style="margin-top:12px">Aaj ka summary</label>
-    <textarea id="summary" placeholder="Aaj ka din kaisa raha, kal kya sudhaarna hai..."></textarea>
+    <label style="margin-top:12px">Summary of the day</label>
+    <textarea id="summary" placeholder="How was the day, what to improve tomorrow..."></textarea>
     <div style="margin-top:12px" class="tot" id="totals"></div>
   </div>
 
-  <div class="row"><button class="btn" id="save">💾 Save karo</button><button class="btn g" id="clear">Naya / Clear</button></div>
+  <div class="row"><button class="btn" id="save">💾 Save</button><button class="btn g" id="clear">New / Clear</button></div>
   <div class="status" id="status"></div>
 </section>
 
 <!-- GRAPH -->
 <section class="view" id="v-graph">
-  <h1>Graph</h1><div class="sub">Jitni entries hongi, graph utna bharega.</div>
+  <h1>Graph</h1><div class="sub">The more entries you add, the fuller the graph gets.</div>
   <div class="stats" id="stats"></div>
   <div class="card">
     <div class="row" style="margin-bottom:12px">
@@ -129,12 +133,13 @@ svg text{fill:var(--mute);font-size:10px}
         <option value="run">Running (km)</option>
         <option value="walk">Walking (km)</option>
         <option value="gym">Gym (minute)</option>
-        <option value="burn">Calories: khayi vs gym burn</option>
+        <option value="burn">Calories: eaten vs total burn (base + gym)</option>
+        <option value="net">Net calories (surplus / deficit)</option>
         <option value="tm">Treadmill (km: walk / run)</option>
-        <option value="wake">Uthne ka time</option>
-        <option value="time">Time: sahi use vs waste (ghante)</option>
+        <option value="wake">Wake-up time</option>
+        <option value="time">Time: used well vs wasted (hours)</option>
       </select>
-      <select id="grng" style="flex:1"><option value="7">7 din</option><option value="14">14 din</option><option value="30">30 din</option></select>
+      <select id="grng" style="flex:1"><option value="7">7 days</option><option value="14">14 days</option><option value="30">30 days</option></select>
     </div>
     <div id="chart"></div><div class="leg" id="leg"></div>
   </div>
@@ -148,10 +153,10 @@ svg text{fill:var(--mute);font-size:10px}
     <button class="btn g s" id="csv">⬇ CSV</button><button class="btn g s" id="bk">💾 Backup</button>
     <button class="btn g s" id="rs">📂 Restore</button><input type="file" id="rf" accept=".json" hidden>
   </div>
-  <div class="card" id="cloud"><h2>☁️ Google Sheet me save (cloud)</h2>
-    <label>Web App URL (Apps Script se milega)</label><input id="cUrl" placeholder="https://script.google.com/macros/s/.../exec">
-    <label style="margin-top:10px">Secret password (jo script me likha)</label><input id="cKey" type="password">
-    <div class="row" style="margin-top:10px"><button class="btn s" id="cSave">Jodo &amp; Sync</button><button class="btn g s" id="cSync">Sync abhi</button></div>
+  <div class="card" id="cloud"><h2>☁️ Save to Google Sheet (cloud)</h2>
+    <label>Web App URL (from Apps Script)</label><input id="cUrl" placeholder="https://script.google.com/macros/s/.../exec">
+    <label style="margin-top:10px">Secret password (the KEY in your script)</label><input id="cKey" type="password">
+    <div class="row" style="margin-top:10px"><button class="btn s" id="cSave">Connect &amp; Sync</button><button class="btn g s" id="cSync">Sync now</button></div>
     <div class="status" id="cStat" style="color:var(--mute)"></div></div>
   <div class="tl" id="tl"></div>
 </section>
@@ -160,24 +165,29 @@ svg text{fill:var(--mute);font-size:10px}
 <script>
 const $=id=>document.getElementById(id);
 const LSK="routine_data_v1";
-const FIELDS=["wake","runKm","runMin","bfCal","bfFood","comment","lunchCal","lunchFood","gymMin","gymCal","dinCal","dinFood","walkKm","walkMin","useH","wasteH","summary"];
+const FIELDS=["wake","runKm","runMin","bfCal","bfFood","comment","lunchCal","lunchFood","gymMin","gymCal","dinCal","dinFood","walkKm","walkMin","useH","wasteH","summary","bmr"];
 let entries={},gym=[],tm=[];
 const pad=n=>String(n).padStart(2,"0");
 const fmt=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const today=()=>fmt(new Date());
 const num=v=>Number(v)||0;
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const dateTxt=(k,o)=>new Date(k+"T00:00").toLocaleDateString("hi-IN",o);
+const dateTxt=(k,o)=>new Date(k+"T00:00").toLocaleDateString("en-IN",o);
 const totCal=e=>num(e.bfCal)+num(e.lunchCal)+num(e.dinCal);
 const tmCal=e=>(e.tm||[]).reduce((s,x)=>s+num(x.c),0);
 const tmKm=(e,t)=>(e.tm||[]).filter(x=>!t||x.t===t).reduce((s,x)=>s+num(x.sp)*num(x.m)/60,0);
 const burn=e=>num(e.gymCal)||tmCal(e);
 const r1=v=>Math.round(v*10)/10;
+const DEFBMR=()=>{try{return localStorage.getItem("routine_bmr")||"1800"}catch(e){return"1800"}};
+const bmrOf=e=>num(e.bmr)||num(DEFBMR());
+const totalBurn=e=>bmrOf(e)+burn(e);
+const net=e=>totCal(e)-totalBurn(e);
+const has=e=>Object.keys(e).length>0;
 const wakeH=e=>{if(!e||!e.wake)return 0;const[h,m]=e.wake.split(":").map(Number);return h+m/60};
 const hhmm=h=>pad(Math.floor(h))+":"+pad(Math.round((h%1)*60));
 
 function lsLoad(){try{return JSON.parse(localStorage.getItem(LSK)||"{}")}catch(e){return{}}}
-function lsSave(){try{localStorage.setItem(LSK,JSON.stringify(entries))}catch(e){alert("Browser me save nahi ho paya. Backup le lo.")}}
+function lsSave(){try{localStorage.setItem(LSK,JSON.stringify(entries))}catch(e){alert("Could not save in this browser. Please take a backup.")}}
 
 /* navigation */
 function go(){const h=location.hash.slice(1),v=["today","graph","history"].includes(h)?h:"today";
@@ -196,14 +206,14 @@ $("mode").onclick=()=>setTheme(document.documentElement.dataset.theme==="dark"?"
 /* gym rows */
 function drawGym(){const box=$("gymRows");box.innerHTML="";
   gym.forEach((x,i)=>{const r=document.createElement("div");r.className="ex";
-    r.innerHTML='<input placeholder="Exercise" value="'+esc(x.n)+'"><input type="number" placeholder="Sets" value="'+esc(x.s)+'"><input type="number" placeholder="Reps" value="'+esc(x.r)+'"><input type="number" placeholder="kg" value="'+esc(x.w)+'"><button title="hatao">✕</button>';
+    r.innerHTML='<input placeholder="Exercise" value="'+esc(x.n)+'"><input type="number" placeholder="Sets" value="'+esc(x.s)+'"><input type="number" placeholder="Reps" value="'+esc(x.r)+'"><input type="number" placeholder="kg" value="'+esc(x.w)+'"><button title="Remove">✕</button>';
     const ins=r.querySelectorAll("input");
     ["n","s","r","w"].forEach((k,j)=>ins[j].oninput=()=>{x[k]=ins[j].value});
     r.querySelector("button").onclick=()=>{gym.splice(i,1);drawGym()};
     box.appendChild(r)});}
 function drawTm(){const box=$("tmRows");box.innerHTML="";
   tm.forEach((x,i)=>{const r=document.createElement("div");r.className="tm";
-    r.innerHTML='<select><option value="walk">🚶 Walk</option><option value="run">🏃 Run</option></select><input type="number" placeholder="Minute" min="0"><input type="number" placeholder="km/h" min="0" step="0.1"><input type="number" placeholder="Incline %" min="0" step="0.5"><input type="number" placeholder="Calories" min="0"><button title="hatao">✕</button>';
+    r.innerHTML='<select><option value="walk">🚶 Walk</option><option value="run">🏃 Run</option></select><input type="number" placeholder="Minutes" min="0"><input type="number" placeholder="km/h" min="0" step="0.1"><input type="number" placeholder="Incline %" min="0" step="0.5"><input type="number" placeholder="Calories" min="0"><button title="Remove">✕</button>';
     const sel=r.querySelector("select");sel.value=x.t||"walk";x.t=sel.value;sel.onchange=()=>{x.t=sel.value;dirty=true};
     const ins=r.querySelectorAll("input");["m","sp","inc","c"].forEach((k,j)=>{ins[j].value=x[k]??"";ins[j].oninput=()=>{x[k]=ins[j].value;updTot()}});
     r.querySelector("button").onclick=()=>{tm.splice(i,1);drawTm();updTot()};
@@ -212,18 +222,18 @@ $("addTm").onclick=()=>{tm.push({t:"walk",m:"",sp:"",inc:"",c:""});drawTm()};
 $("addEx").onclick=()=>{gym.push({n:"",s:"",r:"",w:""});drawGym()};
 
 /* form */
-function updTot(){const e={bfCal:$("bfCal").value,lunchCal:$("lunchCal").value,dinCal:$("dinCal").value,gymCal:$("gymCal").value,tm};
-  const u=num($("useH").value),w=num($("wasteH").value);
-  $("totals").textContent="🔥 Kul calories khayi: "+totCal(e)+" kcal"+(burn(e)?"   ·   🏋️ Gym burn: "+burn(e)+" kcal":"")+((u||w)?"   ·   ⏱ Sahi use: "+u+"h, Waste: "+w+"h":"");}
+function updTot(){const e={bfCal:$("bfCal").value,lunchCal:$("lunchCal").value,dinCal:$("dinCal").value,gymCal:$("gymCal").value,bmr:$("bmr").value,tm};
+  const u=num($("useH").value),w=num($("wasteH").value),eat=totCal(e),bt=totalBurn(e),n=eat-bt;
+  $("totals").innerHTML="🍽️ Eaten: "+eat+" kcal<br>🔥 Burned: "+bt+" kcal (base "+bmrOf(e)+" + gym "+burn(e)+")<br>⚖️ Net: "+(n>0?"+":"")+n+" kcal "+(eat?(n>0?"(surplus)":"(deficit)"):"")+((u||w)?"<br>⏱ Used well: "+u+"h · Wasted: "+w+"h":"");}
 document.querySelectorAll("#v-today input,#v-today textarea").forEach(i=>i.addEventListener("input",updTot));
-function fill(d){const e=entries[d]||{};FIELDS.forEach(k=>$(k).value=e[k]??"");
+function fill(d){const e=entries[d]||{};FIELDS.forEach(k=>$(k).value=e[k]??"");if(!$("bmr").value)$("bmr").value=DEFBMR();
   gym=JSON.parse(JSON.stringify(e.gym||[]));drawGym();tm=JSON.parse(JSON.stringify(e.tm||[]));drawTm();updTot();}
 $("date").value=today();
 $("date").onchange=()=>{fill($("date").value);$("status").textContent=""};
 $("clear").onclick=()=>{$("date").value=today();fill("__none__");$("status").textContent=""};
-$("save").onclick=()=>{const d=$("date").value;if(!d){alert("Date chuno");return}
-  const e={};FIELDS.forEach(k=>e[k]=$(k).value);e.gym=gym.filter(x=>x.n||x.s||x.r||x.w);e.tm=tm.filter(x=>x.m||x.sp||x.c);
-  e.updated=Date.now();entries[d]=e;lsSave();dirty=false;$("status").textContent="✅ Save ho gaya. History aur Graph me dekh sakte ho.";cloudPush(d,e);};
+$("save").onclick=()=>{const d=$("date").value;if(!d){alert("Please choose a date");return}
+  const e={};FIELDS.forEach(k=>e[k]=$(k).value);try{if(e.bmr)localStorage.setItem("routine_bmr",e.bmr)}catch(x){}e.gym=gym.filter(x=>x.n||x.s||x.r||x.w);e.tm=tm.filter(x=>x.m||x.sp||x.c);
+  e.updated=Date.now();entries[d]=e;lsSave();dirty=false;$("status").textContent="✅ Saved. You can see it in History and Graph.";cloudPush(d,e);};
 
 /* chart */
 function chart(days,series,o){
@@ -247,33 +257,34 @@ function renderGraph(){
   if(m==="cal"){series=[S("Breakfast","var(--c4)",e=>num(e.bfCal)),S("Lunch","var(--c1)",e=>num(e.lunchCal)),S("Dinner","var(--c3)",e=>num(e.dinCal))];o.stacked=true}
   else if(m==="run")series=[S("Running km","var(--c1)",e=>num(e.runKm))];
   else if(m==="walk")series=[S("Walking km","var(--c2)",e=>num(e.walkKm))];
-  else if(m==="gym")series=[S("Gym minute","var(--c3)",e=>num(e.gymMin))];
-  else if(m==="burn")series=[S("Khayi (intake)","var(--c1)",totCal),S("Gym burn","var(--c2)",burn)];
+  else if(m==="gym")series=[S("Gym minutes","var(--c3)",e=>num(e.gymMin))];
+  else if(m==="burn")series=[S("Eaten","var(--c1)",totCal),S("Total burn (base + gym)","var(--c2)",e=>has(e)?totalBurn(e):0)];
+  else if(m==="net")series=[S("Surplus","var(--bad)",e=>has(e)&&totCal(e)?Math.max(0,net(e)):0),S("Deficit","var(--c2)",e=>has(e)&&totCal(e)?Math.max(0,-net(e)):0)];
   else if(m==="tm"){series=[S("Walk km","var(--c2)",e=>r1(tmKm(e,"walk"))),S("Run km","var(--c1)",e=>r1(tmKm(e,"run")))];o.stacked=true}
-  else if(m==="wake"){series=[S("Uthne ka time","var(--c4)",e=>wakeH(e))];o.yfmt=hhmm}
-  else series=[S("Sahi use","var(--c2)",e=>num(e.useH)),S("Waste","var(--bad)",e=>num(e.wasteH))];
+  else if(m==="wake"){series=[S("Wake-up time","var(--c4)",e=>wakeH(e))];o.yfmt=hhmm}
+  else series=[S("Used well","var(--c2)",e=>num(e.useH)),S("Wasted","var(--bad)",e=>num(e.wasteH))];
   $("chart").innerHTML=chart(days,series,o);
   $("leg").innerHTML=series.map(s=>'<span><i style="background:'+s.color+'"></i>'+s.name+'</span>').join("");
   const have=E.filter(e=>Object.keys(e).length);const avg=f=>have.length?Math.round(have.reduce((s,e)=>s+f(e),0)/have.length*10)/10:"–";
   const sum=f=>Math.round(have.reduce((s,e)=>s+f(e),0)*10)/10;
   const W=have.filter(e=>e.wake);
-  const items=[[have.length+"/"+n,"Entry wale din"],[avg(totCal)+" kcal","Avg calories/din"],[sum(e=>num(e.runKm))+" km","Total running"],[sum(e=>num(e.walkKm))+" km","Total walking"],[avg(burn)+" kcal","Avg gym burn"],[avg(e=>num(e.useH))+"h","Avg sahi use"],[avg(e=>num(e.wasteH))+"h","Avg waste"],[W.length?hhmm(W.reduce((s,e)=>s+wakeH(e),0)/W.length):"–","Avg uthne ka time"]];
-  $("stats").innerHTML=items.map(x=>'<div class="stat"><b>'+x[0]+'</b><span>'+x[1]+' · '+n+' din</span></div>').join("");}
+  const items=[[have.length+"/"+n,"Days with entries"],[avg(totCal)+" kcal","Avg calories eaten/day"],[sum(e=>num(e.runKm))+" km","Total running"],[sum(e=>num(e.walkKm))+" km","Total walking"],[avg(burn)+" kcal","Avg gym burn"],[(()=>{const q=have.filter(e=>totCal(e));return q.length?Math.round(q.reduce((a,e)=>a+net(e),0)/q.length):"–"})()+" kcal","Avg net (eaten − burned)"],[avg(e=>num(e.useH))+"h","Avg time used well"],[avg(e=>num(e.wasteH))+"h","Avg time wasted"],[W.length?hhmm(W.reduce((s,e)=>s+wakeH(e),0)/W.length):"–","Avg wake-up time"]];
+  $("stats").innerHTML=items.map(x=>'<div class="stat"><b>'+x[0]+'</b><span>'+x[1]+' · '+n+' days</span></div>').join("");}
 $("gsel").onchange=renderGraph;$("grng").onchange=renderGraph;
 
 /* history */
 function renderHistory(){
   const keys=Object.keys(entries).sort().reverse(),months=[...new Set(keys.map(k=>k.slice(0,7)))],cur=$("month").value||"all";
-  $("month").innerHTML='<option value="all">Saare mahine</option>'+months.map(m=>'<option value="'+m+'">'+dateTxt(m+"-01",{month:"long",year:"numeric"})+'</option>').join("");
+  $("month").innerHTML='<option value="all">All months</option>'+months.map(m=>'<option value="'+m+'">'+dateTxt(m+"-01",{month:"long",year:"numeric"})+'</option>').join("");
   $("month").value=months.includes(cur)?cur:"all";
   const shown=keys.filter(k=>$("month").value==="all"||k.startsWith($("month").value));
   $("hsub").textContent=shown.length+" entries";
-  $("tl").innerHTML=shown.length?"":'<div class="empty">Abhi koi entry nahi. "Aaj" tab me pehli entry karo.</div>';
+  $("tl").innerHTML=shown.length?"":'<div class="empty">No entries yet. Add your first one in the "Today" tab.</div>';
   shown.forEach(k=>{const e=entries[k],it=document.createElement("div");it.className="item";
     const L=(a,b)=>b?'<div class="ln"><b>'+a+':</b> '+b+'</div>':'';
     const gy=(e.gym||[]).map(x=>esc(x.n)+(x.s||x.r?" "+esc(x.s||"?")+"×"+esc(x.r||"?"):"")+(x.w?" @"+esc(x.w)+"kg":"")).join(", ");
     it.innerHTML='<h3>'+dateTxt(k,{weekday:"long",day:"numeric",month:"short",year:"numeric"})+'</h3>'
-     +L("🌅 Uthe",esc(e.wake))
+     +L("🌅 Woke up",esc(e.wake))
      +L("🏃 Running",(e.runKm?esc(e.runKm)+" km":"")+(e.runMin?" / "+esc(e.runMin)+" min":""))
      +L("🍳 Breakfast",(e.bfCal?esc(e.bfCal)+" kcal":"")+(e.bfFood?" — "+esc(e.bfFood):""))
      +L("📝 Comment",esc(e.comment))
@@ -283,12 +294,13 @@ function renderHistory(){
      +L("🏃 Treadmill",(e.tm||[]).map(x=>(x.t==="run"?"Run ":"Walk ")+num(x.m)+" min @ "+num(x.sp)+" km/h"+(num(x.inc)?", incline "+num(x.inc)+"%":"")+(num(x.c)?" · "+num(x.c)+" kcal":"")).join("<br>"))
      +L("🍽️ Dinner",(e.dinCal?esc(e.dinCal)+" kcal":"")+(e.dinFood?" — "+esc(e.dinFood):""))
      +L("🚶 Walking",(e.walkKm?esc(e.walkKm)+" km":"")+(e.walkMin?" / "+esc(e.walkMin)+" min":""))
-     +L("🔥 Kul calories",totCal(e)?totCal(e)+" kcal":"")
-     +L("⏱ Time",(e.useH||e.wasteH)?"Sahi use "+num(e.useH)+"h · Waste "+num(e.wasteH)+"h":"")
+     +L("🔥 Total eaten",totCal(e)?totCal(e)+" kcal":"")
+     +L("⚖️ Net",totCal(e)?(net(e)>0?"+":"")+net(e)+" kcal (eaten "+totCal(e)+" − burned "+totalBurn(e)+")":"")
+     +L("⏱ Time",(e.useH||e.wasteH)?"Used well "+num(e.useH)+"h · Wasted "+num(e.wasteH)+"h":"")
      +L("📊 Summary",esc(e.summary))
      +'<div class="acts"><a class="ed">Edit</a><a class="dl">Delete</a></div>';
     it.querySelector(".ed").onclick=()=>{$("date").value=k;fill(k);location.hash="today";scrollTo(0,0)};
-    it.querySelector(".dl").onclick=()=>{if(confirm(k+" ki entry delete karein?")){delete entries[k];lsSave();renderHistory();cloudDel(k)}};
+    it.querySelector(".dl").onclick=()=>{if(confirm(k+" - delete this entry?")){delete entries[k];lsSave();renderHistory();cloudDel(k)}};
     $("tl").appendChild(it)});}
 $("month").onchange=renderHistory;
 
@@ -297,7 +309,7 @@ function dlFile(n,t,m){const a=document.createElement("a");a.href=URL.createObje
 $("bk").onclick=()=>dlFile("routine-backup.json",JSON.stringify(entries),"application/json");
 $("rs").onclick=()=>$("rf").click();
 $("rf").onchange=()=>{const f=$("rf").files[0];if(!f)return;const r=new FileReader();
-  r.onload=()=>{try{entries=Object.assign(entries,JSON.parse(r.result));lsSave();renderHistory();alert("Restore ho gaya ✅")}catch(e){alert("File sahi nahi hai")}};r.readAsText(f)};
+  r.onload=()=>{try{entries=Object.assign(entries,JSON.parse(r.result));lsSave();renderHistory();alert("Restored ✅")}catch(e){alert("This file is not valid")}};r.readAsText(f)};
 $("csv").onclick=()=>{const h=["date",...FIELDS,"gym","treadmill","total_cal"];
   const rows=[h].concat(Object.keys(entries).sort().map(k=>{const e=entries[k];return [k,...FIELDS.map(f=>e[f]),(e.gym||[]).map(x=>[x.n,x.s,x.r,x.w].join("/")).join("|"),(e.tm||[]).map(x=>[x.t,x.m,x.sp,x.inc,x.c].join("/")).join("|"),totCal(e)]}));
   dlFile("routine.csv","\ufeff"+rows.map(r=>r.map(x=>'"'+String(x??"").replace(/"/g,'""')+'"').join(",")).join("\n"),"text/csv")};
@@ -308,15 +320,15 @@ let cfg={url:"",key:""};try{Object.assign(cfg,JSON.parse(localStorage.getItem("r
 $("cUrl").value=cfg.url||"";$("cKey").value=cfg.key||"";
 const cmsg=t=>{$("cStat").textContent=t};
 async function cPost(b){const r=await fetch(cfg.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({key:cfg.key},b))});
-  const j=await r.json();if(j.error)throw new Error("password galat");return j}
-async function cloudPush(d,e){if(!cfg.url)return;try{await cPost({action:"save",date:d,entry:e});cmsg("☁️ Cloud me bhi save ho gaya ✅")}catch(x){cmsg("⚠️ Cloud save fail — baad me 'Sync abhi' dabao")}}
+  const j=await r.json();if(j.error)throw new Error("wrong password");return j}
+async function cloudPush(d,e){if(!cfg.url)return;try{await cPost({action:"save",date:d,entry:e});cmsg("☁️ Also saved to the cloud ✅")}catch(x){cmsg("⚠️ Cloud save failed - press 'Sync now' later")}}
 async function cloudDel(d){if(!cfg.url)return;try{await cPost({action:"delete",date:d})}catch(x){}}
-async function cloudSync(){if(!cfg.url)return;cmsg("Sync ho raha hai...");
-  try{const r=await fetch(cfg.url+"?key="+encodeURIComponent(cfg.key));const c=await r.json();if(c.error)throw new Error("password galat");
+async function cloudSync(){if(!cfg.url)return;cmsg("Syncing...");
+  try{const r=await fetch(cfg.url+"?key="+encodeURIComponent(cfg.key));const c=await r.json();if(c.error)throw new Error("wrong password");
     Object.keys(c).forEach(k=>{if(!entries[k]||num(c[k].updated)>num(entries[k].updated))entries[k]=c[k]});
     for(const k of Object.keys(entries)){if(!c[k]||num(entries[k].updated)>num(c[k].updated))await cPost({action:"save",date:k,entry:entries[k]})}
-    lsSave();if(!dirty)fill($("date").value);renderHistory();renderGraph();cmsg("☁️ Sync ho gaya — "+Object.keys(entries).length+" entries")}
-  catch(x){cmsg("⚠️ Sync fail: "+x.message+" (URL aur password check karo)")}}
+    lsSave();if(!dirty)fill($("date").value);renderHistory();renderGraph();cmsg("☁️ Sync complete - "+Object.keys(entries).length+" entries")}
+  catch(x){cmsg("⚠️ Sync failed: "+x.message+" (check the URL and password)")}}
 $("cSave").onclick=()=>{cfg={url:$("cUrl").value.trim(),key:$("cKey").value};try{localStorage.setItem("routine_cloud",JSON.stringify(cfg))}catch(e){}cloudSync()};
 $("cSync").onclick=cloudSync;
 
