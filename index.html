@@ -75,6 +75,9 @@ svg text{fill:var(--mute);font-size:10px}
 .acts{margin-top:10px;display:flex;gap:16px;font-size:.8rem;font-weight:600}
 .acts a{color:var(--c1);cursor:pointer}
 .empty{color:var(--mute);text-align:center;padding:28px 0}
+.pill{font-size:.74rem;font-weight:700;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--soft);color:var(--mute);white-space:nowrap}
+.pill.ok{background:var(--burn-bg);border-color:var(--burn-bd);color:var(--g1)}
+.pill.err{background:var(--eat-bg);border-color:var(--eat-bd);color:var(--r1)}
 .warn{background:#fff4d6;border:1px solid #f0cf7a;color:#6b4e00;border-radius:12px;padding:11px 14px;font-size:.86rem;margin-bottom:14px}
 :root[data-theme="dark"] .warn{background:#3a2f12;border-color:#7a6224;color:#f3d98a}
 .warn a{font-weight:700;text-decoration:underline;cursor:pointer}
@@ -90,7 +93,7 @@ svg text{fill:var(--mute);font-size:10px}
 <header><div class="bar">
   <div class="logo"><span class="lg">R</span>My Daily Routine</div>
   <nav><a data-v="today">Today</a><a data-v="graph">Graph</a><a data-v="history">History</a></nav>
-  <button class="ib" id="mode">Dark</button>
+  <div style="display:flex;gap:8px;align-items:center"><span class="pill off" id="pill">Cloud: off</span><button class="ib" id="mode">Dark</button></div>
 </div></header>
 <main>
 
@@ -196,7 +199,7 @@ svg text{fill:var(--mute);font-size:10px}
   <div class="card" id="cloud"><h2>Save to Google Sheet (cloud)</h2>
     <label>Web App URL (from Apps Script)</label><input id="cUrl" placeholder="https://script.google.com/macros/s/.../exec">
     <label style="margin-top:10px">Secret password (the KEY in your script)</label><input id="cKey" type="password">
-    <div class="row" style="margin-top:10px"><button class="btn s" id="cSave">Connect &amp; Sync</button><button class="btn g s" id="cSync">Sync now</button><button class="btn g s" id="cLink">Copy phone setup link</button></div>
+    <div class="row" style="margin-top:10px"><button class="btn s" id="cSave">Connect &amp; Sync</button><button class="btn g s" id="cSync">Sync now</button><button class="btn g s" id="cUp">Upload from this device</button><button class="btn g s" id="cLink">Copy phone setup link</button></div>
     <div class="status" id="cStat" style="color:var(--mute)"></div></div>
   <div class="tl" id="tl"></div>
 </section>
@@ -212,6 +215,15 @@ const fmt=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const today=()=>fmt(new Date());
 const num=v=>Number(v)||0;
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function normKey(k){
+  if(/^\d{4}-\d{2}-\d{2}$/.test(k))return k;
+  const M={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+  const m=String(k).match(/([A-Za-z]{3})\s+(\d{1,2})\s+(\d{4})\s+(\d{2}):(\d{2}):(\d{2})\s+GMT([+-])(\d{2})(\d{2})/);
+  if(m&&M[m[1]]!==undefined){const off=(m[7]==="-"?-1:1)*(Number(m[8])*60+Number(m[9]));
+    return fmt(new Date(Date.UTC(+m[3],M[m[1]],+m[2],+m[4],+m[5],+m[6])-off*60000))}
+  const d=new Date(k);return isNaN(d)?null:fmt(d)}
+function normObj(c){const o={};Object.keys(c).forEach(k=>{const n=normKey(k);if(!n)return;
+  if(!o[n]||num(c[k].updated)>=num(o[n].updated))o[n]=c[k]});return o}
 const dateTxt=(k,o)=>{const d=new Date(k+"T00:00");return isNaN(d)?String(k):d.toLocaleDateString("en-IN",o)};
 const totCal=e=>num(e.bfCal)+num(e.lunchCal)+num(e.dinCal);
 const tmCal=e=>(e.tm||[]).reduce((s,x)=>s+num(x.c),0);
@@ -369,8 +381,14 @@ const cmsg=t=>{$("cStat").textContent=t};
 let pend={save:{},del:{}};try{Object.assign(pend,JSON.parse(localStorage.getItem("routine_pending")||"{}"))}catch(e){}
 pend.save=pend.save||{};pend.del=pend.del||{};
 const pSave=()=>{try{localStorage.setItem("routine_pending",JSON.stringify(pend))}catch(e){}};
-async function cPost(b){const r=await fetch(cfg.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({key:cfg.key},b))});
-  const j=await r.json();if(j.error)throw new Error("wrong password");return j}
+async function cReq(url,opt){let r;
+  try{r=await fetch(url,opt)}catch(e){throw new Error("cannot reach the URL. Check the Web App URL (it must end with /exec) and your internet")}
+  const t=await r.text();let j;
+  try{j=JSON.parse(t)}catch(e){throw new Error(t.trim().charAt(0)==="<"?"Google sent a web page instead of data. In Deploy settings, Who has access must be Anyone, and use the /exec URL of the latest deployment":"unexpected reply from the script")}
+  if(j&&j.error)throw new Error(j.error==="key"?"the password does not match the KEY in the script":"script error: "+j.error);return j}
+const cPost=b=>cReq(cfg.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({key:cfg.key},b))});
+const cGet=()=>cReq(cfg.url+"?key="+encodeURIComponent(cfg.key));
+function pill(t,c){$("pill").textContent=t;$("pill").className="pill "+c}
 let flushing=null;
 function flush(){if(flushing)return flushing;
   const p=(async()=>{for(;;){
@@ -379,22 +397,23 @@ function flush(){if(flushing)return flushing;
     break}})();
   flushing=p;const done=()=>{if(flushing===p)flushing=null};p.then(done,done);return p}
 async function cloudPush(d,e){pend.save[d]=e;delete pend.del[d];pSave();if(!cfg.url)return;
-  try{await flush();cmsg("Saved to the cloud.")}catch(x){cmsg("Cloud save failed. It will retry on the next sync.")}}
+  try{await flush();cmsg("Saved to the cloud.");pill("Cloud: synced","ok")}catch(x){cmsg("Cloud save failed: "+x.message+". It will retry on the next sync.");pill("Cloud: error","err")}}
 async function cloudDel(d){pend.del[d]=1;delete pend.save[d];pSave();if(!cfg.url)return;
-  try{await flush();cmsg("Deleted from the cloud.")}catch(x){cmsg("Cloud delete failed. It will retry on the next sync.")}}
+  try{await flush();cmsg("Deleted from the cloud.");pill("Cloud: synced","ok")}catch(x){cmsg("Cloud delete failed: "+x.message+". It will retry on the next sync.");pill("Cloud: error","err")}}
 async function cloudSync(){if(!cfg.url)return;cmsg("Syncing...");
   try{await flush();
-    const r=await fetch(cfg.url+"?key="+encodeURIComponent(cfg.key));const c=await r.json();if(c.error)throw new Error("wrong password");
-    const o={};Object.keys(c).forEach(k=>{let n=k;if(!/^\d{4}-\d{2}-\d{2}$/.test(k)){const d=new Date(k);if(isNaN(d))return;n=fmt(d)}
-      if(!o[n]||num(c[k].updated)>=num(o[n].updated))o[n]=c[k]});
+    const c=await cGet();
+    const o=normObj(c);const weird=Object.keys(c).some(k=>!/^\d{4}-\d{2}-\d{2}$/.test(k));
     entries=o;lsSave();updWarn();if(!dirty)fill($("date").value);renderHistory();renderGraph();
-    cmsg("Sync complete: "+Object.keys(entries).length+" entries (the cloud copy is now shown here).")}
-  catch(x){cmsg("Sync failed: "+x.message+" (check the URL and password)")}}
+    cmsg("Sync complete at "+new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})+". "+Object.keys(entries).length+" entries in the cloud."+(weird?" Note: your Google script is the OLD version and sends broken dates. Paste the new Code.gs, run cleanUp, and deploy a new version.":""));pill("Cloud: synced","ok")}
+  catch(x){cmsg("Sync failed: "+x.message);pill("Cloud: error","err")}}
 $("cSave").onclick=()=>{const old=cfg.url;cfg={url:$("cUrl").value.trim(),key:$("cKey").value};
   try{localStorage.setItem("routine_cloud",JSON.stringify(cfg))}catch(e){}
   updWarn();if(cfg.url&&cfg.url!==old)Object.keys(entries).forEach(k=>{pend.save[k]=entries[k]});pSave();cloudSync()};
 $("cSync").onclick=cloudSync;
-function updWarn(){$("warn").hidden=!!cfg.url}
+function updWarn(){$("warn").hidden=!!cfg.url;if(!cfg.url)pill("Cloud: off","off")}
+$("cUp").onclick=async()=>{if(!cfg.url){cmsg("Connect first.");return}Object.keys(entries).forEach(k=>{pend.save[k]=entries[k]});pSave();cmsg("Uploading...");
+  try{await flush();cmsg("Uploaded "+Object.keys(entries).length+" entries from this device.");cloudSync()}catch(x){cmsg("Upload failed: "+x.message);pill("Cloud: error","err")}};
 $("warnGo").onclick=()=>{location.hash="history";setTimeout(()=>$("cUrl").focus(),50)};
 $("cLink").onclick=async()=>{if(!cfg.url){cmsg("Connect first, then copy the link.");return}
   const link=location.origin+location.pathname+"#s="+btoa(unescape(encodeURIComponent(JSON.stringify(cfg))));
@@ -403,10 +422,10 @@ updWarn();
 $("wipe").onclick=async()=>{if(!confirm("Delete ALL entries? They will also be removed from the Google Sheet."))return;
   if(prompt('Type DELETE to confirm')!=="DELETE")return;
   await cloudSync();Object.keys(entries).forEach(k=>{pend.del[k]=1;delete pend.save[k]});entries={};lsSave();pSave();renderHistory();renderGraph();
-  if(cfg.url){try{await flush();cmsg("All entries deleted.")}catch(x){cmsg("Cloud delete failed. It will retry on the next sync.")}}};
+  if(cfg.url){try{await flush();cmsg("All entries deleted.")}catch(x){cmsg("Cloud delete failed: "+x.message)}}};
 
 
-entries=lsLoad();fill(today());go();cloudSync();
+entries=normObj(lsLoad());fill(today());go();cloudSync();
 </script>
 </body>
 </html>
