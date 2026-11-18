@@ -75,6 +75,9 @@ svg text{fill:var(--mute);font-size:10px}
 .acts{margin-top:10px;display:flex;gap:16px;font-size:.8rem;font-weight:600}
 .acts a{color:var(--c1);cursor:pointer}
 .empty{color:var(--mute);text-align:center;padding:28px 0}
+.warn{background:#fff4d6;border:1px solid #f0cf7a;color:#6b4e00;border-radius:12px;padding:11px 14px;font-size:.86rem;margin-bottom:14px}
+:root[data-theme="dark"] .warn{background:#3a2f12;border-color:#7a6224;color:#f3d98a}
+.warn a{font-weight:700;text-decoration:underline;cursor:pointer}
 .status{font-size:.85rem;color:var(--c2);margin-top:10px}
 @media(max-width:899px){.today{display:block}
 .side{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:6;background:var(--card);border-top:1px solid var(--line);padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 16px rgba(16,24,40,.08)}
@@ -95,6 +98,7 @@ svg text{fill:var(--mute);font-size:10px}
 <section class="view" id="v-today">
   <h1>Today's record</h1><div class="sub">Fill it in from top to bottom, in the order of your day.</div>
   <div class="key"><span><i class="dot r"></i>Red fields: calories eaten</span><span><i class="dot g"></i>Green fields: calories burned</span></div>
+  <div class="warn" id="warn" hidden>This device is not connected to your Google Sheet, so it only shows data saved on this device. <a id="warnGo">Connect it now</a> (History tab, Cloud card).</div>
   <div class="today"><div class="formcol">
   <div class="card"><label>Date</label><input type="date" id="date"></div>
 
@@ -192,7 +196,7 @@ svg text{fill:var(--mute);font-size:10px}
   <div class="card" id="cloud"><h2>Save to Google Sheet (cloud)</h2>
     <label>Web App URL (from Apps Script)</label><input id="cUrl" placeholder="https://script.google.com/macros/s/.../exec">
     <label style="margin-top:10px">Secret password (the KEY in your script)</label><input id="cKey" type="password">
-    <div class="row" style="margin-top:10px"><button class="btn s" id="cSave">Connect &amp; Sync</button><button class="btn g s" id="cSync">Sync now</button></div>
+    <div class="row" style="margin-top:10px"><button class="btn s" id="cSave">Connect &amp; Sync</button><button class="btn g s" id="cSync">Sync now</button><button class="btn g s" id="cLink">Copy phone setup link</button></div>
     <div class="status" id="cStat" style="color:var(--mute)"></div></div>
   <div class="tl" id="tl"></div>
 </section>
@@ -208,7 +212,7 @@ const fmt=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const today=()=>fmt(new Date());
 const num=v=>Number(v)||0;
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const dateTxt=(k,o)=>new Date(k+"T00:00").toLocaleDateString("en-IN",o);
+const dateTxt=(k,o)=>{const d=new Date(k+"T00:00");return isNaN(d)?String(k):d.toLocaleDateString("en-IN",o)};
 const totCal=e=>num(e.bfCal)+num(e.lunchCal)+num(e.dinCal);
 const tmCal=e=>(e.tm||[]).reduce((s,x)=>s+num(x.c),0);
 const tmKm=(e,t)=>(e.tm||[]).filter(x=>!t||x.t===t).reduce((s,x)=>s+num(x.sp)*num(x.m)/60,0);
@@ -357,6 +361,8 @@ $("csv").onclick=()=>{const h=["date",...FIELDS,"gym","treadmill","total_cal"];
 
 /* cloud sync (Google Apps Script). The cloud is the source of truth. */
 let dirty=false;document.addEventListener("input",e=>{if(e.target.closest("#v-today"))dirty=true});
+if(location.hash.slice(0,3)==="#s="){try{const c=JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(3)))));if(c.url)localStorage.setItem("routine_cloud",JSON.stringify(c))}catch(e){}
+  history.replaceState(null,"",location.pathname+location.search)}
 let cfg={url:"",key:""};try{Object.assign(cfg,JSON.parse(localStorage.getItem("routine_cloud")||"{}"))}catch(e){}
 $("cUrl").value=cfg.url||"";$("cKey").value=cfg.key||"";
 const cmsg=t=>{$("cStat").textContent=t};
@@ -379,13 +385,21 @@ async function cloudDel(d){pend.del[d]=1;delete pend.save[d];pSave();if(!cfg.url
 async function cloudSync(){if(!cfg.url)return;cmsg("Syncing...");
   try{await flush();
     const r=await fetch(cfg.url+"?key="+encodeURIComponent(cfg.key));const c=await r.json();if(c.error)throw new Error("wrong password");
-    entries=c;lsSave();if(!dirty)fill($("date").value);renderHistory();renderGraph();
+    const o={};Object.keys(c).forEach(k=>{let n=k;if(!/^\d{4}-\d{2}-\d{2}$/.test(k)){const d=new Date(k);if(isNaN(d))return;n=fmt(d)}
+      if(!o[n]||num(c[k].updated)>=num(o[n].updated))o[n]=c[k]});
+    entries=o;lsSave();updWarn();if(!dirty)fill($("date").value);renderHistory();renderGraph();
     cmsg("Sync complete: "+Object.keys(entries).length+" entries (the cloud copy is now shown here).")}
   catch(x){cmsg("Sync failed: "+x.message+" (check the URL and password)")}}
 $("cSave").onclick=()=>{const old=cfg.url;cfg={url:$("cUrl").value.trim(),key:$("cKey").value};
   try{localStorage.setItem("routine_cloud",JSON.stringify(cfg))}catch(e){}
-  if(cfg.url&&cfg.url!==old)Object.keys(entries).forEach(k=>{pend.save[k]=entries[k]});pSave();cloudSync()};
+  updWarn();if(cfg.url&&cfg.url!==old)Object.keys(entries).forEach(k=>{pend.save[k]=entries[k]});pSave();cloudSync()};
 $("cSync").onclick=cloudSync;
+function updWarn(){$("warn").hidden=!!cfg.url}
+$("warnGo").onclick=()=>{location.hash="history";setTimeout(()=>$("cUrl").focus(),50)};
+$("cLink").onclick=async()=>{if(!cfg.url){cmsg("Connect first, then copy the link.");return}
+  const link=location.origin+location.pathname+"#s="+btoa(unescape(encodeURIComponent(JSON.stringify(cfg))));
+  try{await navigator.clipboard.writeText(link);cmsg("Setup link copied. Open it once on your phone. It contains your password, so do not share it.")}catch(e){prompt("Copy this link:",link)}};
+updWarn();
 $("wipe").onclick=async()=>{if(!confirm("Delete ALL entries? They will also be removed from the Google Sheet."))return;
   if(prompt('Type DELETE to confirm')!=="DELETE")return;
   await cloudSync();Object.keys(entries).forEach(k=>{pend.del[k]=1;delete pend.save[k]});entries={};lsSave();pSave();renderHistory();renderGraph();
