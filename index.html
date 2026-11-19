@@ -81,18 +81,30 @@ svg text{fill:var(--mute);font-size:10px}
 .warn{background:#fff4d6;border:1px solid #f0cf7a;color:#6b4e00;border-radius:12px;padding:11px 14px;font-size:.86rem;margin-bottom:14px}
 :root[data-theme="dark"] .warn{background:#3a2f12;border-color:#7a6224;color:#f3d98a}
 .warn a{font-weight:700;text-decoration:underline;cursor:pointer}
+.gpbar{height:10px;background:var(--soft);border-radius:999px;overflow:hidden}
+.gpbar i{display:block;height:100%;background:var(--c2);border-radius:999px}
+.gpl{display:flex;justify-content:space-between;font-size:.8rem;color:var(--mute);margin:8px 0 14px;gap:8px}
+.gpl b{color:var(--ink)}
+.note{font-size:.78rem;color:var(--mute);margin-top:6px}
+.chat{height:min(52vh,460px);overflow-y:auto;padding:4px 2px;margin-bottom:12px}
+.msg{max-width:88%;padding:10px 13px;border-radius:14px;margin:8px 0;font-size:.92rem;white-space:pre-wrap;line-height:1.5}
+.msg.bot{background:var(--soft);border-top-left-radius:4px}
+.msg.me{background:var(--c1);color:#fff;margin-left:auto;border-top-right-radius:4px}
+.qk{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.qk button{background:var(--soft);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:7px 13px;font:inherit;font-size:.83rem;cursor:pointer}
+.qk button:hover{border-color:var(--c1)}
 .status{font-size:.85rem;color:var(--c2);margin-top:10px}
 @media(max-width:899px){.today{display:block}
 .side{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:6;background:var(--card);border-top:1px solid var(--line);padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 16px rgba(16,24,40,.08)}
 .side .card{border:0;box-shadow:none;padding:0;background:transparent}.side h2,.side .brk,.side .tile small{display:none}
-.side .tiles{grid-template-columns:repeat(3,1fr)}.side .tile{display:block;text-align:center}.side .tile{padding:7px 4px}.side .tile span{font-size:.65rem}.side .tile b{font-size:1.15rem}}
+.side .tiles{grid-template-columns:repeat(auto-fit,minmax(72px,1fr))}.side .tile{display:block;text-align:center}.side .tile{padding:7px 4px}.side .tile span{font-size:.65rem}.side .tile b{font-size:1.15rem}}
 @media(max-width:520px){.tm{grid-template-columns:1fr 1fr 1fr}.tm select{grid-column:1/-1}.ex{grid-template-columns:1fr 1fr 1fr 1fr}.ex input:first-child{grid-column:1/-1}.tile b{font-size:1.25rem}}
 </style>
 </head>
 <body>
 <header><div class="bar">
   <div class="logo"><span class="lg">R</span>My Daily Routine</div>
-  <nav><a data-v="today">Today</a><a data-v="graph">Graph</a><a data-v="history">History</a></nav>
+  <nav><a data-v="today">Today</a><a data-v="graph">Graph</a><a data-v="coach">Coach</a><a data-v="history">History</a></nav>
   <div style="display:flex;gap:8px;align-items:center"><span class="pill off" id="pill">Cloud: off</span><button class="ib" id="mode">Dark</button></div>
 </div></header>
 <main>
@@ -109,12 +121,12 @@ svg text{fill:var(--mute);font-size:10px}
     <div><label>Wake-up time</label><input type="time" id="wake"></div>
     <div><label>Running (km)</label><input type="number" id="runKm" min="0" step="0.1"></div>
     <div><label>Running time (minutes)</label><input type="number" id="runMin" min="0"></div>
-    <div><label>Calories burned in running</label><input class="bn" type="number" id="runCal" min="0"></div>
+    <div><label>Calories burned in running (auto, editable)</label><input class="bn" type="number" id="runCal" min="0"></div>
   </div></div>
 
   <div class="card"><h2>Breakfast</h2><div class="grid">
     <div><label>Calories</label><input type="number" class="eat" id="bfCal" min="0"></div>
-    <div><label>What did you eat</label><input id="bfFood"></div>
+    <div><label>What did you eat</label><input id="bfFood" placeholder="e.g. 2 roti, 1 katori sabzi"><button type="button" class="btn g s est" data-m="bf" style="margin-top:8px">Estimate calories (AI)</button><div class="note" id="bfNote"></div></div>
   </div></div>
 
   <div class="card"><h2>What I did during the day (comment)</h2>
@@ -122,12 +134,12 @@ svg text{fill:var(--mute);font-size:10px}
 
   <div class="card"><h2>Lunch</h2><div class="grid">
     <div><label>Calories</label><input type="number" class="eat" id="lunchCal" min="0"></div>
-    <div><label>What did you eat</label><input id="lunchFood"></div>
+    <div><label>What did you eat</label><input id="lunchFood" placeholder="e.g. 2 roti, 1 katori sabzi"><button type="button" class="btn g s est" data-m="lunch" style="margin-top:8px">Estimate calories (AI)</button><div class="note" id="lunchNote"></div></div>
   </div></div>
 
   <div class="card"><h2>Evening — Gym</h2>
     <div class="grid" style="margin-bottom:12px"><div><label>Gym duration (minutes)</label><input type="number" id="gymMin" min="0"></div>
-      <div><label>Calories burned in gym (including treadmill)</label><input type="number" class="bn" id="gymCal" min="0"></div></div>
+      <div><label>Calories burned in gym incl. treadmill (auto, editable)</label><input type="number" class="bn" id="gymCal" min="0"></div></div>
     <label>Exercises (name · sets · reps · kg)</label><div id="gymRows"></div>
     <button class="btn g s" id="addEx">+ Add exercise</button>
     <label style="margin-top:16px">Treadmill (type · minutes · speed km/h · incline % · calories)</label><div id="tmRows"></div>
@@ -135,18 +147,20 @@ svg text{fill:var(--mute);font-size:10px}
 
   <div class="card"><h2>Dinner</h2><div class="grid">
     <div><label>Calories</label><input type="number" class="eat" id="dinCal" min="0"></div>
-    <div><label>What did you eat</label><input id="dinFood"></div>
+    <div><label>What did you eat</label><input id="dinFood" placeholder="e.g. 2 roti, 1 katori sabzi"><button type="button" class="btn g s est" data-m="din" style="margin-top:8px">Estimate calories (AI)</button><div class="note" id="dinNote"></div></div>
   </div></div>
 
   <div class="card"><h2>Walking</h2><div class="grid">
     <div><label>Walking (km)</label><input type="number" id="walkKm" min="0" step="0.1"></div>
     <div><label>Walking time (minutes)</label><input type="number" id="walkMin" min="0"></div>
-    <div><label>Calories burned in walking</label><input class="bn" type="number" id="walkCal" min="0"></div>
+    <div><label>Steps (optional)</label><input type="number" id="steps" min="0"><div class="note" id="walkNote"></div></div>
+    <div><label>Calories burned in walking (auto, editable)</label><input class="bn" type="number" id="walkCal" min="0"></div>
   </div></div>
 
   <div class="card"><h2>Daily calories</h2>
     <label>Body's base burn (BMR), kcal per day. Usually 1800–2000. It is remembered for the next days.</label>
-    <input type="number" class="bn" id="bmr" min="0" placeholder="e.g. 1800"></div>
+    <input type="number" class="bn" id="bmr" min="0" placeholder="e.g. 1800">
+    <label style="margin-top:12px">Body weight today, kg (optional)</label><input type="number" id="wt" step="0.1" min="0"></div>
 
   <div class="card"><h2>Summary</h2><div class="grid">
     <div><label>Time used well (hours)</label><input type="number" id="useH" min="0" step="0.5"></div>
@@ -167,6 +181,7 @@ svg text{fill:var(--mute);font-size:10px}
 <!-- GRAPH -->
 <section class="view" id="v-graph">
   <h1>Graph</h1><div class="sub">The more entries you add, the fuller the graph gets.</div>
+  <div class="card goalbox" hidden></div>
   <div class="stats" id="stats"></div>
   <div class="card">
     <div class="row" style="margin-bottom:12px">
@@ -178,6 +193,7 @@ svg text{fill:var(--mute);font-size:10px}
         <option value="burn">Calories: eaten (red) vs total burn (green)</option>
         <option value="parts">Calories burned: base / gym / running / walking</option>
         <option value="net">Net calories (surplus / deficit)</option>
+        <option value="wt">Body weight (kg)</option>
         <option value="tm">Treadmill (km: walk / run)</option>
         <option value="wake">Wake-up time</option>
         <option value="time">Time: used well vs wasted (hours)</option>
@@ -186,6 +202,15 @@ svg text{fill:var(--mute);font-size:10px}
     </div>
     <div id="chart"></div><div class="leg" id="leg"></div>
   </div>
+</section>
+
+<!-- COACH -->
+<section class="view" id="v-coach">
+  <h1>AI Coach</h1><div class="sub">Tell it what you ate, ask what to eat next, or which workout to do. It knows your profile and today's log.</div>
+  <div class="card" id="profCard" hidden></div>
+  <div class="card goalbox" hidden></div>
+  <div class="card"><h2>Chat</h2><div class="chat" id="chat"></div><div class="qk" id="quick"></div>
+    <div class="row" style="flex-wrap:nowrap"><input id="chatIn" placeholder="Type here and press Enter..."><button class="btn" id="chatSend">Send</button></div></div>
 </section>
 
 <!-- HISTORY -->
@@ -208,7 +233,7 @@ svg text{fill:var(--mute);font-size:10px}
 <script>
 const $=id=>document.getElementById(id);
 const LSK="routine_data_v1";
-const FIELDS=["wake","runKm","runMin","bfCal","bfFood","comment","lunchCal","lunchFood","gymMin","gymCal","dinCal","dinFood","walkKm","walkMin","useH","wasteH","summary","bmr","runCal","walkCal"];
+const FIELDS=["wake","runKm","runMin","bfCal","bfFood","comment","lunchCal","lunchFood","gymMin","gymCal","dinCal","dinFood","walkKm","walkMin","useH","wasteH","summary","bmr","runCal","walkCal","steps","wt"];
 let entries={},gym=[],tm=[];
 const pad=n=>String(n).padStart(2,"0");
 const fmt=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
@@ -230,7 +255,7 @@ const tmCal=e=>(e.tm||[]).reduce((s,x)=>s+num(x.c),0);
 const tmKm=(e,t)=>(e.tm||[]).filter(x=>!t||x.t===t).reduce((s,x)=>s+num(x.sp)*num(x.m)/60,0);
 const burn=e=>(num(e.gymCal)||tmCal(e))+num(e.runCal)+num(e.walkCal);
 const r1=v=>Math.round(v*10)/10;
-const DEFBMR=()=>{try{return localStorage.getItem("routine_bmr")||"1800"}catch(e){return"1800"}};
+const DEFBMR=()=>{if(prof)return String(baseOf(prof));try{return localStorage.getItem("routine_bmr")||"1800"}catch(e){return"1800"}};
 const bmrOf=e=>num(e.bmr)||num(DEFBMR());
 const totalBurn=e=>bmrOf(e)+burn(e);
 const net=e=>totCal(e)-totalBurn(e);
@@ -242,7 +267,7 @@ function lsLoad(){try{return JSON.parse(localStorage.getItem(LSK)||"{}")}catch(e
 function lsSave(){try{localStorage.setItem(LSK,JSON.stringify(entries))}catch(e){alert("Could not save in this browser. Please take a backup.")}}
 
 /* navigation */
-function go(){const h=location.hash.slice(1),v=["today","graph","history"].includes(h)?h:"today";
+function go(){const h=location.hash.slice(1),v=["today","graph","history","coach"].includes(h)?h:"today";
   document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
   document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));
   if(v==="graph")renderGraph();if(v==="history")renderHistory();}
@@ -266,9 +291,9 @@ function drawGym(){const box=$("gymRows");box.innerHTML="";
 function drawTm(){const box=$("tmRows");box.innerHTML="";
   tm.forEach((x,i)=>{const r=document.createElement("div");r.className="tm";
     r.innerHTML='<select><option value="walk">Walk</option><option value="run">Run</option></select><input type="number" placeholder="Minutes" min="0"><input type="number" placeholder="km/h" min="0" step="0.1"><input type="number" placeholder="Incline %" min="0" step="0.5"><input class="bn" type="number" placeholder="Calories" min="0"><button title="Remove">✕</button>';
-    const sel=r.querySelector("select");sel.value=x.t||"walk";x.t=sel.value;sel.onchange=()=>{x.t=sel.value;dirty=true};
-    const ins=r.querySelectorAll("input");["m","sp","inc","c"].forEach((k,j)=>{ins[j].value=x[k]??"";ins[j].oninput=()=>{x[k]=ins[j].value;updTot()}});
-    r.querySelector("button").onclick=()=>{tm.splice(i,1);drawTm();updTot()};
+    const sel=r.querySelector("select");sel.value=x.t||"walk";x.t=sel.value;sel.onchange=()=>{x.t=sel.value;dirty=true;autoCalc()};
+    const ins=r.querySelectorAll("input");["m","sp","inc","c"].forEach((k,j)=>{ins[j].value=x[k]??"";ins[j].oninput=()=>{x[k]=ins[j].value;if(k==="c")x.manC=ins[j].value!=="";else autoCalc();updTot()}});
+    r.querySelector("button").onclick=()=>{tm.splice(i,1);drawTm();autoCalc()};
     box.appendChild(r)});}
 $("addTm").onclick=()=>{tm.push({t:"walk",m:"",sp:"",inc:"",c:""});drawTm()};
 $("addEx").onclick=()=>{gym.push({n:"",s:"",r:"",w:""});drawGym()};
@@ -276,19 +301,19 @@ $("addEx").onclick=()=>{gym.push({n:"",s:"",r:"",w:""});drawGym()};
 /* form */
 function updTot(){const e={bfCal:$("bfCal").value,lunchCal:$("lunchCal").value,dinCal:$("dinCal").value,gymCal:$("gymCal").value,runCal:$("runCal").value,walkCal:$("walkCal").value,bmr:$("bmr").value,tm};
   const u=num($("useH").value),w=num($("wasteH").value),eat=totCal(e),bt=totalBurn(e),n=eat-bt,g=num(e.gymCal)||tmCal(e);
-  const T=(c,l,v)=>"<div class='tile "+c+"'><span>"+l+"</span><b>"+v+"</b><small>kcal</small></div>";
-  $("totals").innerHTML="<div class='tiles'>"+T("eat","Eaten",eat)+T("burn","Burned",bt)+T(eat?(n>0?"eat":"burn"):"","Net"+(eat?(n>0?" surplus":" deficit"):""),(n>0?"+":"")+n)+"</div>"
+  const lt=prof?Math.max(floorIn(prof),bt+goalNet(prof))-eat:0;const T=(c,l,v)=>"<div class='tile "+c+"'><span>"+l+"</span><b>"+v+"</b><small>kcal</small></div>";
+  $("totals").innerHTML="<div class='tiles'>"+T("eat","Eaten",eat)+T("burn","Burned",bt)+T(eat?(n>0?"eat":"burn"):"","Net"+(eat?(n>0?" surplus":" deficit"):""),(n>0?"+":"")+n)+(prof?T(lt>=0?"burn":"eat","Left to eat",lt):"")+"</div>"
    +"<div class='brk'>Burn = base "+bmrOf(e)+" + gym "+g+" + running "+num(e.runCal)+" + walking "+num(e.walkCal)+"</div>"
    +((u||w)?"<div class='brk'>Used well: <b>"+u+"h</b> · Wasted: <b>"+w+"h</b></div>":"");}
 document.querySelectorAll("#v-today input,#v-today textarea").forEach(i=>i.addEventListener("input",updTot));
-function fill(d){const e=entries[d]||{};FIELDS.forEach(k=>$(k).value=e[k]??"");if(!$("bmr").value)$("bmr").value=DEFBMR();
+function fill(d){const e=entries[d]||{};FIELDS.forEach(k=>$(k).value=e[k]??"");if(!$("bmr").value)$("bmr").value=DEFBMR();Object.keys(manual).forEach(k=>delete manual[k]);Object.assign(manual,e.man||{});
   gym=JSON.parse(JSON.stringify(e.gym||[]));drawGym();tm=JSON.parse(JSON.stringify(e.tm||[]));drawTm();updTot();}
 $("date").value=today();
 $("date").onchange=()=>{fill($("date").value);$("status").textContent=""};
 $("clear").onclick=()=>{$("date").value=today();fill("__none__");$("status").textContent=""};
 $("save").onclick=()=>{const d=$("date").value;if(!d){alert("Please choose a date");return}
-  const e={};FIELDS.forEach(k=>e[k]=$(k).value);try{if(e.bmr)localStorage.setItem("routine_bmr",e.bmr)}catch(x){}e.gym=gym.filter(x=>x.n||x.s||x.r||x.w);e.tm=tm.filter(x=>x.m||x.sp||x.c);
-  e.updated=Date.now();entries[d]=e;lsSave();dirty=false;$("status").textContent="Saved. You can see it in History and Graph.";cloudPush(d,e);};
+  const e={};FIELDS.forEach(k=>e[k]=$(k).value);try{if(e.bmr)localStorage.setItem("routine_bmr",e.bmr)}catch(x){}e.man=Object.assign({},manual);if(prof&&d===today()&&num(e.wt)){if(!prof.start)prof.start=prof.weight;prof.weight=num(e.wt);prof.updated=Date.now();saveProf();cloudPush("profile",prof)}e.gym=gym.filter(x=>x.n||x.s||x.r||x.w);e.tm=tm.filter(x=>x.m||x.sp||x.c);
+  e.updated=Date.now();entries[d]=e;lsSave();dirty=false;$("status").textContent="Saved. You can see it in History and Graph.";cloudPush(d,e);renderGoal();};
 
 /* chart */
 function chart(days,series,o){
@@ -306,6 +331,7 @@ function chart(days,series,o){
     if(n<=14||i%2===0)g+='<text x="'+cx+'" y="'+(H-8)+'" text-anchor="middle">'+d.slice(8)+'</text>'});
   return '<svg viewBox="0 0 '+W+' '+H+'" width="100%">'+g+'</svg>';}
 function renderGraph(){
+  renderGoal();
   const n=num($("grng").value),days=[];for(let i=n-1;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(fmt(d))}
   const E=days.map(k=>entries[k]||{}),m=$("gsel").value;let series,o={};
   const S=(name,color,f)=>({name,color,vals:E.map(f)});
@@ -315,6 +341,7 @@ function renderGraph(){
   else if(m==="gym")series=[S("Gym minutes","var(--c3)",e=>num(e.gymMin))];
   else if(m==="burn")series=[S("Eaten (intake)","var(--bad)",totCal),S("Total burn (base + exercise)","var(--c2)",e=>has(e)?totalBurn(e):0)];
   else if(m==="parts"){series=[S("Base (BMR)","var(--g4)",e=>has(e)?bmrOf(e):0),S("Gym","var(--g1)",e=>num(e.gymCal)||tmCal(e)),S("Running","var(--g2)",e=>num(e.runCal)),S("Walking","var(--g3)",e=>num(e.walkCal))];o.stacked=true}
+  else if(m==="wt")series=[S("Weight (kg)","var(--c1)",e=>num(e.wt))];
   else if(m==="net")series=[S("Surplus","var(--bad)",e=>has(e)&&totCal(e)?Math.max(0,net(e)):0),S("Deficit","var(--c2)",e=>has(e)&&totCal(e)?Math.max(0,-net(e)):0)];
   else if(m==="tm"){series=[S("Walk km","var(--c2)",e=>r1(tmKm(e,"walk"))),S("Run km","var(--c1)",e=>r1(tmKm(e,"run")))];o.stacked=true}
   else if(m==="wake"){series=[S("Wake-up time","var(--c4)",e=>wakeH(e))];o.yfmt=hhmm}
@@ -403,8 +430,10 @@ async function cloudDel(d){pend.del[d]=1;delete pend.save[d];pSave();if(!cfg.url
 async function cloudSync(){if(!cfg.url)return;cmsg("Syncing...");
   try{await flush();
     const c=await cGet();
-    const o=normObj(c);const weird=Object.keys(c).some(k=>!/^\d{4}-\d{2}-\d{2}$/.test(k));
-    entries=o;lsSave();updWarn();if(!dirty)fill($("date").value);renderHistory();renderGraph();
+    const o=normObj(c);const weird=Object.keys(c).some(k=>k!=="profile"&&!/^\d{4}-\d{2}-\d{2}$/.test(k));
+    entries=o;lsSave();updWarn();
+    const cp=c.profile;if(cp&&typeof cp==="object"&&(!prof||num(cp.updated)>=num(prof.updated))){prof=cp;saveProf()}else if(prof&&!cp){pend.save.profile=prof;pSave()}
+    renderProf();updTot();if(!dirty)fill($("date").value);renderHistory();renderGraph();
     cmsg("Sync complete at "+new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})+". "+Object.keys(entries).length+" entries in the cloud."+(weird?" Note: your Google script is the OLD version and sends broken dates. Paste the new Code.gs, run cleanUp, and deploy a new version.":""));pill("Cloud: synced","ok")}
   catch(x){cmsg("Sync failed: "+x.message);pill("Cloud: error","err")}}
 $("cSave").onclick=()=>{const old=cfg.url;cfg={url:$("cUrl").value.trim(),key:$("cKey").value};
@@ -424,6 +453,158 @@ $("wipe").onclick=async()=>{if(!confirm("Delete ALL entries? They will also be r
   await cloudSync();Object.keys(entries).forEach(k=>{pend.del[k]=1;delete pend.save[k]});entries={};lsSave();pSave();renderHistory();renderGraph();
   if(cfg.url){try{await flush();cmsg("All entries deleted.")}catch(x){cmsg("Cloud delete failed: "+x.message)}}};
 
+
+/* ===================== profile, auto calories, AI coach ===================== */
+let prof=null;try{prof=JSON.parse(localStorage.getItem("routine_profile")||"null")}catch(e){}
+const saveProf=()=>{try{localStorage.setItem("routine_profile",JSON.stringify(prof))}catch(e){}};
+const bmrCalc=p=>Math.round(10*p.weight+6.25*p.height-5*p.age+(p.gender==="male"?5:-161));
+const baseOf=p=>Math.round(bmrCalc(p)*1.2/10)*10;
+const goalNet=p=>p.goal==="lose"?-500:p.goal==="gain"?400:0;
+const floorIn=p=>p.gender==="male"?1500:1200;
+const curW=()=>num($("wt").value)||num(prof&&prof.weight)||70;
+const manual={};
+["runCal","walkCal","gymCal"].forEach(id=>$(id).addEventListener("input",()=>{manual[id]=$(id).value!==""}));
+
+/* automatic calories (ACSM walking/running equations, net of resting burn, so BMR is not counted twice) */
+function kcalNet(type,kmh,min,inc){const s=kmh*1000/60,g=num(inc)/100,vo=type==="run"?0.2*s+0.9*s*g:0.1*s+1.8*s*g;return Math.round(vo*curW()*5/1000*min)}
+function setAuto(id,v){if(manual[id])return;$(id).value=v>0?v:""}
+function autoCalc(){
+  let rk=num($("runKm").value),rm=num($("runMin").value);if(rk&&!rm)rm=rk/9*60;
+  setAuto("runCal",rk&&rm?kcalNet("run",rk/(rm/60),rm,0):0);
+  let wk=num($("walkKm").value),wm=num($("walkMin").value),st=num($("steps").value);
+  $("walkNote").textContent="";
+  if(!wk&&st){wk=st*(num(prof&&prof.height)||170)*0.415/100000;$("walkNote").textContent="about "+(Math.round(wk*100)/100)+" km"}
+  if(wk&&!wm)wm=wk/5*60;
+  setAuto("walkCal",wk&&wm?kcalNet("walk",wk/(wm/60),wm,0):0);
+  let tmMin=0;tm.forEach((x,i)=>{tmMin+=num(x.m);if(!x.manC){const c=num(x.m)&&num(x.sp)?kcalNet(x.t,num(x.sp),num(x.m),x.inc):"";x.c=c;
+    const el=$("tmRows").children[i];if(el)el.querySelectorAll("input")[3].value=c}});
+  setAuto("gymCal",Math.round(tmCal({tm})+Math.max(0,num($("gymMin").value)-tmMin)*0.044*curW()));
+  updTot()}
+["runKm","runMin","walkKm","walkMin","steps","gymMin","wt"].forEach(id=>$(id).addEventListener("input",autoCalc));
+
+/* AI through your Google script (the API key stays inside Google, never on the website) */
+async function ai(system,messages,max){
+  if(!cfg.url)throw new Error("connect your Google Sheet first (History tab)");
+  const m=messages.slice(-10);while(m.length&&m[0].role!=="user")m.shift();
+  const j=await cPost({action:"ai",system,messages:m,max_tokens:max||600});return j.text||""}
+const FOOD_SYS='You estimate the calories of Indian home-style food. The user describes what they ate (English or Hinglish). Reply with ONLY valid JSON and nothing else: {"items":[{"name":"1 roti","kcal":100}],"total":0}. If a quantity is missing assume a normal home portion. Be realistic and round to 5 kcal.';
+const foodAuto={};
+async function estimate(m){const f=$(m+"Food").value.trim(),note=$(m+"Note");
+  if(!f){note.textContent="Type what you ate first.";return}
+  note.textContent="Estimating calories...";
+  try{const t=await ai(FOOD_SYS,[{role:"user",content:f}],400);const j=JSON.parse(t.slice(t.indexOf("{"),t.lastIndexOf("}")+1));
+    const tot=Math.round(num(j.total)||(j.items||[]).reduce((a,i)=>a+num(i.kcal),0));
+    $(m+"Cal").value=tot;foodAuto[m]=true;dirty=true;updTot();
+    note.textContent=(j.items||[]).map(i=>i.name+" "+num(i.kcal)).join(" + ")+" = "+tot+" kcal (AI estimate, you can edit)"}
+  catch(e){note.textContent="Could not estimate: "+e.message}}
+document.querySelectorAll(".est").forEach(b=>b.onclick=()=>estimate(b.dataset.m));
+["bf","lunch","din"].forEach(m=>{
+  $(m+"Food").addEventListener("change",()=>{if(cfg.url&&$(m+"Food").value.trim()&&(!$(m+"Cal").value||foodAuto[m]))estimate(m)});
+  $(m+"Cal").addEventListener("input",()=>{foodAuto[m]=false})});
+
+/* coach chat */
+const COACH_SYS="You are a friendly, practical fitness and nutrition coach inside a personal daily-routine tracker. The user is Indian, so suggest Indian foods (roti, dal, sabzi, paneer, eggs, curd, rice, fruits, sprouts) with approximate calories and quantities. Use only the data given below; never invent numbers. Keep answers short (under 180 words) and concrete. When the user tells you what they ate, estimate its calories and say how many calories are left for the day. Reply in the same language style as the user (English, or Hinglish in Roman letters). Never advise eating below 1500 kcal/day for men or 1200 for women. This is general guidance, not medical advice; for medical conditions suggest a doctor.";
+function ctx(){
+  const last7=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=fmt(d),e=entries[k];if(e)last7.push({date:k,eaten:totCal(e),burned:totalBurn(e),net:net(e),runKm:num(e.runKm),walkKm:num(e.walkKm),gymMin:num(e.gymMin),weight:e.wt||""})}
+  const e={bfCal:$("bfCal").value,lunchCal:$("lunchCal").value,dinCal:$("dinCal").value,gymCal:$("gymCal").value,runCal:$("runCal").value,walkCal:$("walkCal").value,bmr:$("bmr").value,tm};
+  const goalIn=prof?Math.max(floorIn(prof),totalBurn(e)+goalNet(prof)):null;
+  return "PROFILE: "+JSON.stringify(prof)+"\nTARGETS: baseDailyBurn="+(prof?baseOf(prof):"")+", goalNetPerDay="+(prof?goalNet(prof):"")+", intakeGoalForTodayIncludingExerciseSoFar="+goalIn+"\nTODAY (live form): "+JSON.stringify({time:new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}),
+    breakfast:{kcal:num(e.bfCal),food:$("bfFood").value},lunch:{kcal:num(e.lunchCal),food:$("lunchFood").value},dinner:{kcal:num(e.dinCal),food:$("dinFood").value},
+    eaten:totCal(e),burned:totalBurn(e),runningKm:num($("runKm").value),walkingKm:num($("walkKm").value),steps:num($("steps").value),gymMinutes:num($("gymMin").value),exercises:gym,treadmill:tm,hoursUsedWell:$("useH").value,hoursWasted:$("wasteH").value})+"\nLAST 7 DAYS: "+JSON.stringify(last7)+"\nGOAL_ETA: "+JSON.stringify(goalEta())}
+let chat=[];try{chat=JSON.parse(localStorage.getItem("routine_chat")||"[]")}catch(e){}
+function bubble(role,text){const d=document.createElement("div");d.className="msg "+(role==="user"?"me":"bot");d.textContent=text;$("chat").appendChild(d);$("chat").scrollTop=$("chat").scrollHeight;return d}
+function addMsg(role,text){chat.push({role,content:text});chat=chat.slice(-30);try{localStorage.setItem("routine_chat",JSON.stringify(chat))}catch(e){}return bubble(role,text)}
+async function coachAsk(q){addMsg("user",q);const t=bubble("assistant","Thinking...");
+  try{const r=await ai(COACH_SYS+"\n\n"+ctx(),chat,700);t.remove();addMsg("assistant",r)}catch(e){t.textContent="Could not reach the coach: "+e.message}}
+const QUICK=["Review my day so far","What should I eat next?","Which workout should I do today?","Plan tomorrow for me"];
+function showChips(list){$("quick").innerHTML="";list.forEach(t=>{const b=document.createElement("button");b.textContent=t;b.onclick=()=>send(t);$("quick").appendChild(b)})}
+
+/* onboarding (the coach asks the questions) */
+const num2=(lo,hi)=>v=>{const n=parseFloat(v);return n>=lo&&n<=hi?n:null};
+const STEPS=[
+ {k:"name",q:"Hi! I'm your coach. What's your name?",parse:v=>v.trim().slice(0,40)||null},
+ {k:"gender",q:n=>"Nice to meet you, "+n+"! What is your gender?",chips:["Male","Female"],parse:v=>/^f/i.test(v)?"female":/^m/i.test(v)?"male":null},
+ {k:"age",q:"How old are you?",parse:num2(10,100)},
+ {k:"height",q:"Your height in cm? (for example 175)",parse:num2(120,230)},
+ {k:"weight",q:"Your current weight in kg?",parse:num2(30,250)},
+ {k:"goal",q:"What is your goal?",chips:["Lose weight","Gain weight","Maintain"],parse:v=>/los/i.test(v)?"lose":/gain/i.test(v)?"gain":/main/i.test(v)?"maintain":null},
+ {k:"target",q:"What is your target weight in kg?",skip:p=>p.goal==="maintain",parse:num2(30,250)}];
+let ob=null;
+const qText=s=>typeof s.q==="function"?s.q(ob.p.name):s.q;
+function startOb(){ob={i:0,p:{}};$("chat").innerHTML="";askOb()}
+function askOb(){while(ob.i<STEPS.length&&STEPS[ob.i].skip&&STEPS[ob.i].skip(ob.p))ob.i++;
+  if(ob.i>=STEPS.length){finishOb();return}
+  const s=STEPS[ob.i];bubble("assistant",qText(s));showChips(s.chips||[])}
+function finishOb(){const p=ob.p;ob=null;p.start=p.weight;p.updated=Date.now();prof=p;saveProf();cloudPush("profile",prof);
+  try{localStorage.setItem("routine_bmr",String(baseOf(p)))}catch(e){}
+  $("bmr").value=baseOf(p);updTot();
+  const bm=bmrCalc(p),base=baseOf(p),prot=Math.round(p.weight*(p.goal==="gain"?2:1.8));
+  let t="Thanks "+p.name+"! Here is your starting plan.\n\n• Resting burn (BMR): "+bm+" kcal\n• Normal day burn without workout: about "+base+" kcal (set as your base burn)\n";
+  if(p.goal==="lose")t+="• Eat about "+Math.max(floorIn(p),base-500)+" kcal on a rest day. Workouts add to it, and the 'Left to eat' tile does that for you.\n• Goal: "+p.weight+" to "+p.target+" kg, about "+Math.max(1,Math.round(Math.abs(p.weight-p.target)/0.5))+" weeks at 0.5 kg per week\n";
+  else if(p.goal==="gain")t+="• Eat about "+(base+400)+" kcal on a rest day, more on workout days.\n• Goal: "+p.weight+" to "+p.target+" kg, about "+Math.max(1,Math.round(Math.abs(p.weight-p.target)/0.35))+" weeks at 0.35 kg per week\n";
+  else t+="• Eat about "+base+" kcal on a rest day to stay at "+p.weight+" kg.\n";
+  t+="• Protein: about "+prot+" g per day\n\nNow just fill your day in the Today tab. Calories for running, walking, steps and treadmill are calculated automatically. You can also tell me what you ate, like '1 roti and 1 katori sabzi', and I will estimate the calories.";
+  addMsg("assistant",t);showChips(QUICK);renderProf()}
+function renderProf(){const c=$("profCard");if(!prof){c.hidden=true;renderGoal();return}c.hidden=false;
+  c.innerHTML="<h2>Your profile</h2><div class='row' style='justify-content:space-between'><div style='font-size:.9rem'><b>"+esc(prof.name)+"</b> · "+esc(prof.gender)+", "+esc(prof.age)+" y, "+esc(prof.height)+" cm, "+esc(prof.weight)+" kg<br><span style='color:var(--mute)'>Goal: "+(prof.goal==="lose"?"lose weight":prof.goal==="gain"?"gain weight":"maintain")+(prof.target?" to "+esc(prof.target)+" kg":"")+" · base burn "+baseOf(prof)+" kcal</span></div><button class='btn g s' id='editProf'>Edit profile</button></div>";
+  $("editProf").onclick=()=>{if(confirm("Answer the coach's questions again?"))startOb()};renderGoal()}
+function send(v){v=(v||$("chatIn").value).trim();if(!v)return;$("chatIn").value="";
+  if(ob){bubble("user",v);const s=STEPS[ob.i],r=s.parse(v);
+    if(r===null){bubble("assistant","Sorry, I did not get that. "+qText(s));return}
+    ob.p[s.k]=r;ob.i++;askOb();return}
+  coachAsk(v)}
+$("chatSend").onclick=()=>send();
+$("chatIn").addEventListener("keydown",e=>{if(e.key==="Enter")send()});
+(async function coachInit(){
+  if(!prof&&cfg.url)await cloudSync();
+  renderProf();
+  if(!prof){location.hash="coach";startOb();return}
+  chat.forEach(m=>bubble(m.role,m.content));
+  if(!chat.length)bubble("assistant","Hi "+prof.name+"! Ask me anything, or tell me what you ate.");
+  showChips(QUICK)})();
+
+/* ===================== goal ETA: updates as your data grows ===================== */
+const daysAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return fmt(d)};
+function goalEta(){
+  if(!prof||!prof.target||prof.goal==="maintain")return null;
+  const dir=prof.goal==="lose"?-1:1,cur=num(prof.weight),tgt=num(prof.target),start=num(prof.start)||cur;
+  const remaining=Math.round(dir*(tgt-cur)*10)/10;
+  const total=Math.abs(tgt-start)||Math.abs(tgt-cur)||1;
+  const progress=Math.max(0,Math.min(100,Math.round((1-Math.max(0,remaining)/total)*100)));
+  const planned=prof.goal==="lose"?0.5:0.35;
+  if(remaining<=0)return{done:true,cur,tgt,start,progress:100};
+  // 1) real weight trend (last 28 days, least squares, kg per week)
+  let wRate=null;const wk=Object.keys(entries).filter(k=>k>=daysAgo(28)&&num(entries[k].wt)).sort();
+  if(wk.length>=2){const t0=new Date(wk[0]+"T00:00").getTime(),pts=wk.map(k=>[(new Date(k+"T00:00").getTime()-t0)/86400000,num(entries[k].wt)]);
+    if(pts[pts.length-1][0]>=6){const n=pts.length,mx=pts.reduce((a,p)=>a+p[0],0)/n,my=pts.reduce((a,p)=>a+p[1],0)/n;
+      const sxx=pts.reduce((a,p)=>a+(p[0]-mx)**2,0),sxy=pts.reduce((a,p)=>a+(p[0]-mx)*(p[1]-my),0);wRate=sxx?sxy/sxx*7:null}}
+  // 2) calorie data (last 14 days, 7700 kcal is about 1 kg)
+  let cRate=null;const dk=Object.keys(entries).filter(k=>k>=daysAgo(14)&&totCal(entries[k])>0);
+  if(dk.length>=3)cRate=dk.reduce((a,k)=>a+net(entries[k]),0)/dk.length*7/7700;
+  const src=wRate!==null?"weight":cRate!==null?"calories":"plan",rate=src==="weight"?wRate:src==="calories"?cRate:dir*planned;
+  const toward=dir*rate;                       // kg per week in the right direction
+  const weeks=toward>0.02?Math.min(remaining/toward,104):null;
+  return{done:false,cur,tgt,start,progress,remaining,src,toward:Math.round(toward*100)/100,weeks:weeks&&Math.round(weeks*10)/10,planned,wRate:wRate!==null?Math.round(wRate*100)/100:null,cRate:cRate!==null?Math.round(cRate*100)/100:null,days:dk.length,weights:wk.length}}
+function renderGoal(){
+  const g=goalEta(),boxes=document.querySelectorAll(".goalbox");
+  boxes.forEach(b=>{
+    if(!prof){b.hidden=true;return}
+    b.hidden=false;
+    if(!g){b.innerHTML="<h2>Goal progress</h2><div class='brk'>Your goal is to maintain "+esc(prof.weight)+" kg. Keep your net calories close to zero.</div>";return}
+    if(g.done){b.innerHTML="<h2>Goal progress</h2><div class='gpbar'><i style='width:100%'></i></div><div class='brk' style='margin-top:12px'>Goal reached: you are at "+g.cur+" kg and your target is "+g.tgt+" kg. Set a new goal in the Coach tab, or switch to maintain.</div>";return}
+    const eta=g.weeks?new Date(Date.now()+g.weeks*7*86400000).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}):"";
+    const T=(c,l,v,u)=>"<div class='tile "+c+"'><span>"+l+"</span><b>"+v+"</b><small>"+u+"</small></div>";
+    const pace=g.toward>0?g.toward+" kg/week":"not yet";
+    const src=g.src==="weight"?"your logged body weight ("+g.weights+" entries)":g.src==="calories"?"your calorie data ("+g.days+" days)":"the standard plan pace ("+g.planned+" kg/week). Log 3+ days of food and exercise to make it personal";
+    let msg;
+    if(!g.weeks)msg="At your current numbers you are not moving toward the goal yet. "+(prof.goal==="lose"?"Eat a little less or move a little more.":"Eat a little more.");
+    else if(g.src==="plan")msg="";
+    else msg=g.toward>=g.planned*0.8?"You are on track.":"Slower than the planned "+g.planned+" kg/week.";
+    b.innerHTML="<h2>Goal progress</h2><div class='gpbar'><i style='width:"+g.progress+"%'></i></div>"
+     +"<div class='gpl'><span>Start "+g.start+" kg</span><b>"+g.cur+" kg now ("+g.progress+"%)</b><span>Goal "+g.tgt+" kg</span></div>"
+     +"<div class='tiles'>"+T("","Remaining",g.remaining,"kg")+T(g.weeks?"burn":"eat","Estimated time",g.weeks?"~"+Math.max(1,Math.round(g.weeks)):"–","weeks")+T("","Current pace",g.toward>0?g.toward:"–",g.toward>0?"kg/week":"")+"</div>"
+     +"<div class='brk'>"+(eta?"Reaching your goal around <b>"+eta+"</b>. ":"")+msg+"</div>"
+     +"<div class='brk'>Based on "+src+"."+(g.wRate!==null&&g.cRate!==null?" Weight trend: "+g.wRate+" kg/week, calorie data: "+g.cRate+" kg/week.":"")+(g.weights<2?" Enter your body weight once a week (Daily calories card) for the most accurate estimate.":"")+"</div>"})}
 
 entries=normObj(lsLoad());fill(today());go();cloudSync();
 </script>
