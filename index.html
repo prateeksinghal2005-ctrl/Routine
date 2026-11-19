@@ -85,6 +85,8 @@ svg text{fill:var(--mute);font-size:10px}
 .gpbar i{display:block;height:100%;background:var(--c2);border-radius:999px}
 .gpl{display:flex;justify-content:space-between;font-size:.8rem;color:var(--mute);margin:8px 0 14px;gap:8px}
 .gpl b{color:var(--ink)}
+.tip{background:var(--soft);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:.88rem}
+.tl2{margin:5px 0}.tl2 i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px}
 .note{font-size:.78rem;color:var(--mute);margin-top:6px}
 .chat{height:min(52vh,460px);overflow-y:auto;padding:4px 2px;margin-bottom:12px}
 .msg{max-width:88%;padding:10px 13px;border-radius:14px;margin:8px 0;font-size:.92rem;white-space:pre-wrap;line-height:1.5}
@@ -103,7 +105,7 @@ svg text{fill:var(--mute);font-size:10px}
 </head>
 <body>
 <header><div class="bar">
-  <div class="logo"><span class="lg">R</span>My Daily Routine</div>
+  <div class="logo"><span class="lg">U</span>My Daily Routine</div>
   <nav><a data-v="today">Today</a><a data-v="graph">Graph</a><a data-v="coach">Coach</a><a data-v="history">History</a></nav>
   <div style="display:flex;gap:8px;align-items:center"><span class="pill off" id="pill">Cloud: off</span><button class="ib" id="mode">Dark</button></div>
 </div></header>
@@ -200,7 +202,7 @@ svg text{fill:var(--mute);font-size:10px}
       </select>
       <select id="grng" style="flex:1"><option value="7">7 days</option><option value="14">14 days</option><option value="30">30 days</option></select>
     </div>
-    <div id="chart"></div><div class="leg" id="leg"></div>
+    <div id="chart"></div><div class="tip" id="chartTip"></div><div class="leg" id="leg"></div>
   </div>
 </section>
 
@@ -224,6 +226,7 @@ svg text{fill:var(--mute);font-size:10px}
   <div class="card" id="cloud"><h2>Save to Google Sheet (cloud)</h2>
     <label>Web App URL (from Apps Script)</label><input id="cUrl" placeholder="https://script.google.com/macros/s/.../exec">
     <label style="margin-top:10px">Secret password (the KEY in your script)</label><input id="cKey" type="password">
+    <label style="margin-top:10px">Your private code (friends: choose your own secret code, 8+ characters. Owner: leave empty)</label><input id="cUid" placeholder="e.g. riya-4821-xk">
     <div class="row" style="margin-top:10px"><button class="btn s" id="cSave">Connect &amp; Sync</button><button class="btn g s" id="cSync">Sync now</button><button class="btn g s" id="cUp">Upload from this device</button><button class="btn g s" id="cLink">Copy phone setup link</button></div>
     <div class="status" id="cStat" style="color:var(--mute)"></div></div>
   <div class="tl" id="tl"></div>
@@ -328,6 +331,7 @@ function chart(days,series,o){
       const x=o.stacked?cx-bw/2:cx-bw*k/2+bw*j;const y=o.stacked?T+ih-ih*acc/mx-h:T+ih-h;
       g+='<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+h+'" rx="3" fill="'+s.color+'"><title>'+d+': '+(o.yfmt?o.yfmt(v):v)+'</title></rect>';
       if(o.stacked)acc+=v});
+    g+='<rect class="hit" data-i="'+i+'" x="'+(L+gw*i)+'" y="'+T+'" width="'+gw+'" height="'+ih+'" fill="transparent" style="cursor:pointer"/>';
     if(n<=14||i%2===0)g+='<text x="'+cx+'" y="'+(H-8)+'" text-anchor="middle">'+d.slice(8)+'</text>'});
   return '<svg viewBox="0 0 '+W+' '+H+'" width="100%">'+g+'</svg>';}
 function renderGraph(){
@@ -347,12 +351,24 @@ function renderGraph(){
   else if(m==="wake"){series=[S("Wake-up time","var(--c4)",e=>wakeH(e))];o.yfmt=hhmm}
   else series=[S("Used well","var(--c2)",e=>num(e.useH)),S("Wasted","var(--bad)",e=>num(e.wasteH))];
   $("chart").innerHTML=chart(days,series,o);
+  window._ch={days,series,o,E,unit:{cal:"kcal",run:"km",walk:"km",gym:"min",burn:"kcal",parts:"kcal",wt:"kg",net:"kcal",tm:"km",time:"h"}[m]||""};attachTips();
   $("leg").innerHTML=series.map(s=>'<span><i style="background:'+s.color+'"></i>'+s.name+'</span>').join("");
   const have=E.filter(e=>Object.keys(e).length);const avg=f=>have.length?Math.round(have.reduce((s,e)=>s+f(e),0)/have.length*10)/10:"–";
   const sum=f=>Math.round(have.reduce((s,e)=>s+f(e),0)*10)/10;
   const W=have.filter(e=>e.wake);
   const items=[[have.length+"/"+n,"Days with entries"],[avg(totCal)+" kcal","Avg calories eaten/day"],[sum(e=>num(e.runKm))+" km","Total running"],[sum(e=>num(e.walkKm))+" km","Total walking"],[avg(burn)+" kcal","Avg exercise burn"],[(()=>{const q=have.filter(e=>totCal(e));return q.length?Math.round(q.reduce((a,e)=>a+net(e),0)/q.length):"–"})()+" kcal","Avg net (eaten − burned)"],[avg(e=>num(e.useH))+"h","Avg time used well"],[avg(e=>num(e.wasteH))+"h","Avg time wasted"],[W.length?hhmm(W.reduce((s,e)=>s+wakeH(e),0)/W.length):"–","Avg wake-up time"]];
   $("stats").innerHTML=items.map(x=>'<div class="stat"><b>'+x[0]+'</b><span>'+x[1]+' · '+n+' days</span></div>').join("");}
+function showTip(i){const c=window._ch;if(!c)return;const d=c.days[i],e=c.E[i];
+  const f=v=>!v?"–":c.o.yfmt?c.o.yfmt(v):(Math.round(v*10)/10)+(c.unit?" "+c.unit:"");
+  let h="<b>"+dateTxt(d,{weekday:"long",day:"numeric",month:"short",year:"numeric"})+"</b>";
+  if(!has(e))h+="<div class='brk'>No entry for this day.</div>";
+  else{c.series.forEach(s=>{h+="<div class='tl2'><i style='background:"+s.color+"'></i>"+s.name+": <b>"+f(s.vals[i])+"</b></div>"});
+    if(totCal(e))h+="<div class='brk'>Day summary: eaten "+totCal(e)+" kcal · burned "+totalBurn(e)+" kcal · net "+(net(e)>0?"+":"")+net(e)+" kcal</div>";
+    h+="<div class='acts'><a id='tipOpen'>Open this day</a></div>"}
+  $("chartTip").innerHTML=h;
+  document.querySelectorAll("#chart .hit").forEach((r,j)=>{r.setAttribute("fill",j===i?"var(--c1)":"transparent");r.setAttribute("fill-opacity",j===i?".1":"1")});
+  if($("tipOpen"))$("tipOpen").onclick=()=>{$("date").value=d;fill(d);location.hash="today";scrollTo(0,0)}}
+function attachTips(){document.querySelectorAll("#chart .hit").forEach(r=>{r.onclick=()=>showTip(+r.dataset.i);r.onmouseenter=()=>showTip(+r.dataset.i)});showTip(window._ch.days.length-1)}
 $("gsel").onchange=renderGraph;$("grng").onchange=renderGraph;
 
 /* history */
@@ -402,8 +418,8 @@ $("csv").onclick=()=>{const h=["date",...FIELDS,"gym","treadmill","total_cal"];
 let dirty=false;document.addEventListener("input",e=>{if(e.target.closest("#v-today"))dirty=true});
 if(location.hash.slice(0,3)==="#s="){try{const c=JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(3)))));if(c.url)localStorage.setItem("routine_cloud",JSON.stringify(c))}catch(e){}
   history.replaceState(null,"",location.pathname+location.search)}
-let cfg={url:"",key:""};try{Object.assign(cfg,JSON.parse(localStorage.getItem("routine_cloud")||"{}"))}catch(e){}
-$("cUrl").value=cfg.url||"";$("cKey").value=cfg.key||"";
+let cfg={url:"",key:"",uid:""};try{Object.assign(cfg,JSON.parse(localStorage.getItem("routine_cloud")||"{}"))}catch(e){}
+$("cUrl").value=cfg.url||"";$("cKey").value=cfg.key||"";$("cUid").value=cfg.uid||"";
 const cmsg=t=>{$("cStat").textContent=t};
 let pend={save:{},del:{}};try{Object.assign(pend,JSON.parse(localStorage.getItem("routine_pending")||"{}"))}catch(e){}
 pend.save=pend.save||{};pend.del=pend.del||{};
@@ -413,8 +429,8 @@ async function cReq(url,opt){let r;
   const t=await r.text();let j;
   try{j=JSON.parse(t)}catch(e){throw new Error(t.trim().charAt(0)==="<"?"Google sent a web page instead of data. In Deploy settings, Who has access must be Anyone, and use the /exec URL of the latest deployment":"unexpected reply from the script")}
   if(j&&j.error)throw new Error(j.error==="key"?"the password does not match the KEY in the script":"script error: "+j.error);return j}
-const cPost=b=>cReq(cfg.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({key:cfg.key},b))});
-const cGet=()=>cReq(cfg.url+"?key="+encodeURIComponent(cfg.key));
+const cPost=b=>cReq(cfg.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({key:cfg.key,uid:cfg.uid||""},b))});
+const cGet=()=>cReq(cfg.url+"?key="+encodeURIComponent(cfg.key)+"&uid="+encodeURIComponent(cfg.uid||""));
 function pill(t,c){$("pill").textContent=t;$("pill").className="pill "+c}
 let flushing=null;
 function flush(){if(flushing)return flushing;
@@ -436,9 +452,9 @@ async function cloudSync(){if(!cfg.url)return;cmsg("Syncing...");
     renderProf();updTot();if(!dirty)fill($("date").value);renderHistory();renderGraph();
     cmsg("Sync complete at "+new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})+". "+Object.keys(entries).length+" entries in the cloud."+(weird?" Note: your Google script is the OLD version and sends broken dates. Paste the new Code.gs, run cleanUp, and deploy a new version.":""));pill("Cloud: synced","ok")}
   catch(x){cmsg("Sync failed: "+x.message);pill("Cloud: error","err")}}
-$("cSave").onclick=()=>{const old=cfg.url;cfg={url:$("cUrl").value.trim(),key:$("cKey").value};
+$("cSave").onclick=()=>{const old=cfg.url+"|"+(cfg.uid||"");cfg={url:$("cUrl").value.trim(),key:$("cKey").value,uid:$("cUid").value.trim()};
   try{localStorage.setItem("routine_cloud",JSON.stringify(cfg))}catch(e){}
-  updWarn();if(cfg.url&&cfg.url!==old)Object.keys(entries).forEach(k=>{pend.save[k]=entries[k]});pSave();cloudSync()};
+  updWarn();if(cfg.url&&cfg.url+"|"+cfg.uid!==old)Object.keys(entries).forEach(k=>{pend.save[k]=entries[k]});pSave();cloudSync()};
 $("cSync").onclick=cloudSync;
 function updWarn(){$("warn").hidden=!!cfg.url;if(!cfg.url)pill("Cloud: off","off")}
 $("cUp").onclick=async()=>{if(!cfg.url){cmsg("Connect first.");return}Object.keys(entries).forEach(k=>{pend.save[k]=entries[k]});pSave();cmsg("Uploading...");
@@ -486,16 +502,22 @@ function autoCalc(){
 async function ai(system,messages,max){
   if(!cfg.url)throw new Error("connect your Google Sheet first (History tab)");
   const m=messages.slice(-10);while(m.length&&m[0].role!=="user")m.shift();
-  const j=await cPost({action:"ai",system,messages:m,max_tokens:max||600});return j.text||""}
-const FOOD_SYS='You estimate the calories of Indian home-style food. The user describes what they ate (English or Hinglish). Reply with ONLY valid JSON and nothing else: {"items":[{"name":"1 roti","kcal":100}],"total":0}. If a quantity is missing assume a normal home portion. Be realistic and round to 5 kcal.';
+  const j=await cPost({action:"ai",system,messages:m,max_tokens:max||600});
+  if(typeof j.text!=="string")throw new Error("your Google script is the old version and has no AI support. Paste the new Code.gs and deploy a NEW version (Deploy > Manage deployments > pencil > Version: New version > Deploy)");
+  if(!j.text.trim())throw new Error("the AI sent an empty reply, please try again");
+  return j.text}
+const FOOD_SYS="You estimate the calories of Indian home-style food. The user describes what they ate (English or Hinglish). Reply in exactly this plain format and nothing else, one line per item and then a total line:\n1 roti = 100 kcal\n1 katori sabzi = 130 kcal\nTOTAL = 230 kcal\nIf a quantity is missing, assume a normal home portion. Be realistic and round to 5 kcal.";
+function parseFood(t){const items=[];
+  t.split("\n").forEach(l=>{const m=l.match(/^[\s\-•*]*(.+?)\s*[=:]\s*~?\s*(\d[\d,]*)\s*kcal/i);if(m&&!/^\W*total/i.test(m[1]))items.push({name:m[1].replace(/\*+/g,"").trim(),kcal:Number(m[2].replace(/,/g,""))})});
+  const tm=t.match(/total\D{0,12}(\d[\d,]*)/i),total=tm?Number(tm[1].replace(/,/g,"")):items.reduce((a,i)=>a+i.kcal,0);
+  if(!(total>0))throw new Error("I could not read calories from the AI reply: "+t.slice(0,90));return{items,total}}
 const foodAuto={};
 async function estimate(m){const f=$(m+"Food").value.trim(),note=$(m+"Note");
   if(!f){note.textContent="Type what you ate first.";return}
   note.textContent="Estimating calories...";
-  try{const t=await ai(FOOD_SYS,[{role:"user",content:f}],400);const j=JSON.parse(t.slice(t.indexOf("{"),t.lastIndexOf("}")+1));
-    const tot=Math.round(num(j.total)||(j.items||[]).reduce((a,i)=>a+num(i.kcal),0));
+  try{const r=parseFood(await ai(FOOD_SYS,[{role:"user",content:f}],300)),tot=Math.round(r.total);
     $(m+"Cal").value=tot;foodAuto[m]=true;dirty=true;updTot();
-    note.textContent=(j.items||[]).map(i=>i.name+" "+num(i.kcal)).join(" + ")+" = "+tot+" kcal (AI estimate, you can edit)"}
+    note.textContent=r.items.map(i=>i.name+" "+i.kcal).join(" + ")+" = "+tot+" kcal (AI estimate, you can edit)"}
   catch(e){note.textContent="Could not estimate: "+e.message}}
 document.querySelectorAll(".est").forEach(b=>b.onclick=()=>estimate(b.dataset.m));
 ["bf","lunch","din"].forEach(m=>{
@@ -503,7 +525,7 @@ document.querySelectorAll(".est").forEach(b=>b.onclick=()=>estimate(b.dataset.m)
   $(m+"Cal").addEventListener("input",()=>{foodAuto[m]=false})});
 
 /* coach chat */
-const COACH_SYS="You are a friendly, practical fitness and nutrition coach inside a personal daily-routine tracker. The user is Indian, so suggest Indian foods (roti, dal, sabzi, paneer, eggs, curd, rice, fruits, sprouts) with approximate calories and quantities. Use only the data given below; never invent numbers. Keep answers short (under 180 words) and concrete. When the user tells you what they ate, estimate its calories and say how many calories are left for the day. Reply in the same language style as the user (English, or Hinglish in Roman letters). Never advise eating below 1500 kcal/day for men or 1200 for women. This is general guidance, not medical advice; for medical conditions suggest a doctor.";
+const COACH_SYS="You are a friendly, practical fitness and nutrition coach inside a personal daily-routine tracker. The user is Indian, so suggest Indian foods (roti, dal, sabzi, paneer, eggs, curd, rice, fruits, sprouts) with approximate calories and quantities. Use only the data given below; never invent numbers. Keep answers short (under 180 words) and concrete. When the user tells you what they ate, estimate its calories and say how many calories are left for the day. Whenever the user says they actually ate or drank something (past tense, not a question or a plan), end your reply with one tag line per meal in exactly this format: [[LOG meal=lunch kcal=230 food=\"1 roti, 1 katori sabzi\"]]. meal must be breakfast, lunch or dinner: use the meal the user names, otherwise choose by the current time in TODAY (before 11:00 breakfast, 11:00 to 16:00 lunch, after that dinner; snacks go to the nearest meal). Never mention or explain the tag. Reply in the same language style as the user (English, or Hinglish in Roman letters). Never advise eating below 1500 kcal/day for men or 1200 for women. This is general guidance, not medical advice; for medical conditions suggest a doctor.";
 function ctx(){
   const last7=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=fmt(d),e=entries[k];if(e)last7.push({date:k,eaten:totCal(e),burned:totalBurn(e),net:net(e),runKm:num(e.runKm),walkKm:num(e.walkKm),gymMin:num(e.gymMin),weight:e.wt||""})}
   const e={bfCal:$("bfCal").value,lunchCal:$("lunchCal").value,dinCal:$("dinCal").value,gymCal:$("gymCal").value,runCal:$("runCal").value,walkCal:$("walkCal").value,bmr:$("bmr").value,tm};
@@ -514,8 +536,20 @@ function ctx(){
 let chat=[];try{chat=JSON.parse(localStorage.getItem("routine_chat")||"[]")}catch(e){}
 function bubble(role,text){const d=document.createElement("div");d.className="msg "+(role==="user"?"me":"bot");d.textContent=text;$("chat").appendChild(d);$("chat").scrollTop=$("chat").scrollHeight;return d}
 function addMsg(role,text){chat.push({role,content:text});chat=chat.slice(-30);try{localStorage.setItem("routine_chat",JSON.stringify(chat))}catch(e){}return bubble(role,text)}
+const mealKey=m=>m==="breakfast"?"bf":m==="lunch"?"lunch":"din";
+function logMeal(meal,kcal,food){const d=today(),k=mealKey(meal);
+  if($("date").value===d&&dirty)$("save").onclick();
+  const e=entries[d]=Object.assign({},entries[d]||{});
+  e[k+"Cal"]=String(num(e[k+"Cal"])+kcal);e[k+"Food"]=(e[k+"Food"]?e[k+"Food"]+", ":"")+food;
+  e.updated=Date.now();lsSave();cloudPush(d,e);
+  if($("date").value===d){fill(d);dirty=false}renderGoal()}
 async function coachAsk(q){addMsg("user",q);const t=bubble("assistant","Thinking...");
-  try{const r=await ai(COACH_SYS+"\n\n"+ctx(),chat,700);t.remove();addMsg("assistant",r)}catch(e){t.textContent="Could not reach the coach: "+e.message}}
+  try{let r=await ai(COACH_SYS+"\n\n"+ctx(),chat,700);t.remove();const logs=[];
+    r=r.replace(/\[\[\s*LOG[^\]]*\]\]/gi,tag=>{const m=tag.match(/meal\s*=\s*(breakfast|lunch|dinner)/i),k=tag.match(/kcal\s*=\s*(\d+)/i),f=tag.match(/food\s*=\s*"([^"]*)"/i);
+      if(m&&k)logs.push({meal:m[1].toLowerCase(),kcal:Number(k[1]),food:f?f[1]:""});return""}).trim();
+    logs.forEach(l=>logMeal(l.meal,l.kcal,l.food));
+    if(logs.length)r+="\n\nAdded to today's log: "+logs.map(l=>l.meal+" +"+l.kcal+" kcal").join(", ")+".";
+    addMsg("assistant",r)}catch(e){t.textContent="Could not reach the coach: "+e.message}}
 const QUICK=["Review my day so far","What should I eat next?","Which workout should I do today?","Plan tomorrow for me"];
 function showChips(list){$("quick").innerHTML="";list.forEach(t=>{const b=document.createElement("button");b.textContent=t;b.onclick=()=>send(t);$("quick").appendChild(b)})}
 
@@ -545,7 +579,7 @@ function finishOb(){const p=ob.p;ob=null;p.start=p.weight;p.updated=Date.now();p
   else t+="• Eat about "+base+" kcal on a rest day to stay at "+p.weight+" kg.\n";
   t+="• Protein: about "+prot+" g per day\n\nNow just fill your day in the Today tab. Calories for running, walking, steps and treadmill are calculated automatically. You can also tell me what you ate, like '1 roti and 1 katori sabzi', and I will estimate the calories.";
   addMsg("assistant",t);showChips(QUICK);renderProf()}
-function renderProf(){const c=$("profCard");if(!prof){c.hidden=true;renderGoal();return}c.hidden=false;
+function renderProf(){const c=$("profCard");document.querySelector(".lg").textContent=prof&&prof.name&&prof.name.trim()?prof.name.trim()[0].toUpperCase():"U";if(!prof){c.hidden=true;renderGoal();return}c.hidden=false;
   c.innerHTML="<h2>Your profile</h2><div class='row' style='justify-content:space-between'><div style='font-size:.9rem'><b>"+esc(prof.name)+"</b> · "+esc(prof.gender)+", "+esc(prof.age)+" y, "+esc(prof.height)+" cm, "+esc(prof.weight)+" kg<br><span style='color:var(--mute)'>Goal: "+(prof.goal==="lose"?"lose weight":prof.goal==="gain"?"gain weight":"maintain")+(prof.target?" to "+esc(prof.target)+" kg":"")+" · base burn "+baseOf(prof)+" kcal</span></div><button class='btn g s' id='editProf'>Edit profile</button></div>";
   $("editProf").onclick=()=>{if(confirm("Answer the coach's questions again?"))startOb()};renderGoal()}
 function send(v){v=(v||$("chatIn").value).trim();if(!v)return;$("chatIn").value="";
