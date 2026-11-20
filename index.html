@@ -1,646 +1,165 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My Daily Routine</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14171a">
+<title>Home control</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f4f5f7;--card:#fff;--ink:#1c2430;--mute:#667085;--line:#e4e7ec;--soft:#f0f2f5;--c1:#3b5bdb;--c2:#1f9d63;--c3:#0e90b8;--c4:#d98a0b;--bad:#d33a2c;
---r1:#a52014;--r2:#e0584a;--r3:#f2958a;--g1:#0d5c36;--g2:#2f9e68;--g3:#6cc296;--g4:#a8dcc2;
---eat-bg:#fde8e5;--eat-bd:#ee9d93;--burn-bg:#dcf4e6;--burn-bd:#6fc496;--sh:0 1px 2px rgba(16,24,40,.05),0 4px 14px rgba(16,24,40,.05)}
-:root[data-theme="dark"]{--bg:#0f1420;--card:#171d2b;--ink:#e8ecf4;--mute:#98a2b3;--line:#2a3347;--soft:#212a3b;--c1:#7c9bff;--c2:#3ecf8e;--c3:#4cc3e6;--c4:#f0b04a;--bad:#ff6b5e;
---r1:#ff9a8d;--r2:#f58a7c;--r3:#f9b0a6;--g1:#6ee7b0;--g2:#6fcfa1;--g3:#93dcb9;--g4:#b8e8d0;
---eat-bg:#3b1d22;--eat-bd:#8a3a42;--burn-bg:#143a2a;--burn-bd:#2f8a5f;--sh:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
-header{position:sticky;top:0;background:color-mix(in srgb,var(--card) 90%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:5}
-.bar{max-width:1000px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.logo{font-weight:700;display:flex;align-items:center;gap:9px;letter-spacing:-.01em}
-.lg{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--c1);color:#fff;font-size:.9rem;font-weight:800}
-nav{display:flex;gap:2px;background:var(--soft);padding:3px;border-radius:999px}
-nav a{padding:6px 15px;border-radius:999px;color:var(--mute);font-size:.88rem;font-weight:600;cursor:pointer;transition:.15s}
-nav a.on{background:var(--card);color:var(--ink);box-shadow:var(--sh)}
-.ib{background:var(--soft);color:var(--ink);border:0;border-radius:999px;height:34px;padding:0 14px;cursor:pointer;font:inherit;font-size:.8rem;font-weight:600}
-main{max-width:1000px;margin:0 auto;padding:26px 16px 100px}
-html{scroll-behavior:smooth}
-.view{display:none}.view.on{display:block}
-h1{font-size:1.55rem;font-weight:700;letter-spacing:-.02em;margin:0}
-h2{font-size:.76rem;font-weight:700;margin:0 0 16px;letter-spacing:.09em;text-transform:uppercase;color:var(--mute);padding-bottom:10px;border-bottom:1px solid var(--line)}
-.sub{color:var(--mute);font-size:.9rem;margin:3px 0 18px}
-.key{display:flex;gap:16px;font-size:.8rem;color:var(--mute);margin:-8px 0 16px}
-.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}.dot.r{background:var(--bad)}.dot.g{background:var(--c2)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:14px;box-shadow:var(--sh)}
-input.eat{background:var(--eat-bg);border-color:var(--eat-bd);color:var(--r1);font-weight:600}
-input.bn{background:var(--burn-bg);border-color:var(--burn-bd);color:var(--g1);font-weight:600}
-.today{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;align-items:start}
-.side{position:sticky;top:78px}
-.side .card{margin:0}
-.side .tiles{grid-template-columns:1fr}.side .tile{display:flex;align-items:baseline;justify-content:space-between;gap:8px;text-align:left;padding:12px 14px}.side .tile small{margin-left:-4px;order:3}.side .tile b{order:2;margin-left:auto}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-label{display:block;font-size:.78rem;font-weight:600;color:var(--mute);margin-bottom:5px}
-input,textarea,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;transition:.15s}
-input:focus,textarea:focus,select:focus{outline:0;border-color:var(--c1);box-shadow:0 0 0 3px color-mix(in srgb,var(--c1) 22%,transparent)}
-textarea{min-height:90px;resize:vertical}
-.btn{background:var(--c1);color:#fff;border:0;border-radius:10px;padding:11px 20px;font:inherit;font-weight:600;cursor:pointer;transition:.15s}
-.btn:hover{filter:brightness(1.08)}
-.btn.g{background:var(--soft);color:var(--ink)}
-.btn.s{padding:8px 13px;font-size:.85rem}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.ex{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:6px;margin-bottom:6px}
-.ex button,.tm button{background:none;border:0;color:var(--bad);cursor:pointer;font-size:1.1rem}
-.tm{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr 1fr auto;gap:6px;margin-bottom:6px}
-.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.tile{border-radius:12px;padding:12px 8px;text-align:center;border:1px solid var(--line);background:var(--soft)}
-.tile span{display:block;font-size:.74rem;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
-.tile b{display:block;font-size:1.55rem;line-height:1.25;font-variant-numeric:tabular-nums}
-.tile small{color:var(--mute);font-size:.75rem}
-.tile.eat{background:var(--eat-bg);border-color:var(--eat-bd)}.tile.eat b{color:var(--bad)}
-.tile.burn{background:var(--burn-bg);border-color:var(--burn-bd)}.tile.burn b{color:var(--c2)}
-.brk{font-size:.8rem;color:var(--mute);margin-top:10px}
-.red{color:var(--bad)}.grn{color:var(--c2)}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:12px;margin-bottom:14px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--sh)}
-.stat b{display:block;font-size:1.4rem;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-.stat span{color:var(--mute);font-size:.78rem}
-.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;margin-top:10px;color:var(--mute)}
-.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
-svg text{fill:var(--mute);font-size:10px}
-.tl{border-left:2px solid var(--line);margin-left:6px;padding-left:18px}
-.item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;position:relative;box-shadow:var(--sh)}
-.item::before{content:"";position:absolute;left:-26px;top:20px;width:10px;height:10px;border-radius:50%;background:var(--c1);border:2px solid var(--bg)}
-.item h3{margin:0 0 8px;font-size:.98rem;font-weight:700}
-.ln{font-size:.87rem;margin:3px 0}
-.ln b{color:var(--mute);font-weight:600}
-.ln.red{color:var(--bad)}.ln.grn{color:var(--c2)}
-.acts{margin-top:10px;display:flex;gap:16px;font-size:.8rem;font-weight:600}
-.acts a{color:var(--c1);cursor:pointer}
-.empty{color:var(--mute);text-align:center;padding:28px 0}
-.pill{font-size:.74rem;font-weight:700;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--soft);color:var(--mute);white-space:nowrap}
-.pill.ok{background:var(--burn-bg);border-color:var(--burn-bd);color:var(--g1)}
-.pill.err{background:var(--eat-bg);border-color:var(--eat-bd);color:var(--r1)}
-.warn{background:#fff4d6;border:1px solid #f0cf7a;color:#6b4e00;border-radius:12px;padding:11px 14px;font-size:.86rem;margin-bottom:14px}
-:root[data-theme="dark"] .warn{background:#3a2f12;border-color:#7a6224;color:#f3d98a}
-.warn a{font-weight:700;text-decoration:underline;cursor:pointer}
-.gpbar{height:10px;background:var(--soft);border-radius:999px;overflow:hidden}
-.gpbar i{display:block;height:100%;background:var(--c2);border-radius:999px}
-.gpl{display:flex;justify-content:space-between;font-size:.8rem;color:var(--mute);margin:8px 0 14px;gap:8px}
-.gpl b{color:var(--ink)}
-.tip{background:var(--soft);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:.88rem}
-.tl2{margin:5px 0}.tl2 i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px}
-.note{font-size:.78rem;color:var(--mute);margin-top:6px}
-.chat{height:min(52vh,460px);overflow-y:auto;padding:4px 2px;margin-bottom:12px}
-.msg{max-width:88%;padding:10px 13px;border-radius:14px;margin:8px 0;font-size:.92rem;white-space:pre-wrap;line-height:1.5}
-.msg.bot{background:var(--soft);border-top-left-radius:4px}
-.msg.me{background:var(--c1);color:#fff;margin-left:auto;border-top-right-radius:4px}
-.qk{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.qk button{background:var(--soft);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:7px 13px;font:inherit;font-size:.83rem;cursor:pointer}
-.qk button:hover{border-color:var(--c1)}
-.status{font-size:.85rem;color:var(--c2);margin-top:10px}
-@media(max-width:899px){.today{display:block}
-.side{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:6;background:var(--card);border-top:1px solid var(--line);padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 16px rgba(16,24,40,.08)}
-.side .card{border:0;box-shadow:none;padding:0;background:transparent}.side h2,.side .brk,.side .tile small{display:none}
-.side .tiles{grid-template-columns:repeat(auto-fit,minmax(72px,1fr))}.side .tile{display:block;text-align:center}.side .tile{padding:7px 4px}.side .tile span{font-size:.65rem}.side .tile b{font-size:1.15rem}}
-@media(max-width:520px){.tm{grid-template-columns:1fr 1fr 1fr}.tm select{grid-column:1/-1}.ex{grid-template-columns:1fr 1fr 1fr 1fr}.ex input:first-child{grid-column:1/-1}.tile b{font-size:1.25rem}}
+:root{--bg:#14171a;--panel:#1d2226;--line:#2b3238;--text:#e8ecef;--dim:#8b96a0;--amber:#f5b942;--ink:#2a1d00;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+[hidden]{display:none!important}
+body{font-family:Outfit,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;max-width:480px;margin:auto;padding:max(20px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:18px}
+header{display:flex;justify-content:space-between;align-items:center}
+h1{font-size:22px;font-weight:600}
+button{font:inherit;color:inherit;cursor:pointer}
+#conn{font-size:14px;padding:8px 14px;border-radius:20px;border:1px solid var(--line);background:var(--panel);color:var(--dim)}
+#conn.ok{color:var(--amber);border-color:var(--amber)}
+#list{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:20px;border-radius:16px;background:var(--panel);border:1px solid var(--line);text-align:left;transition:background .2s,color .2s}
+.row b{display:block;font-size:20px;font-weight:500}
+.row small{font-size:13px;color:var(--dim)}
+.row.on{background:var(--amber);border-color:var(--amber);color:var(--ink)}
+.row.on small{color:var(--ink)}
+.sw{flex:none;width:52px;height:30px;border-radius:15px;background:var(--line);position:relative}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--dim);transition:transform .2s}
+.on .sw{background:var(--ink)}
+.on .sw::after{transform:translateX(22px);background:var(--amber)}
+footer{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:12px}
+#mic{width:80px;height:80px;border-radius:50%;border:1px solid var(--amber);background:var(--panel);display:grid;place-items:center}
+#mic.live{background:var(--amber);animation:p 1s infinite}
+#mic svg{width:34px;height:34px;fill:none;stroke:var(--amber);stroke-width:2;stroke-linecap:round}
+#mic.live svg{stroke:var(--ink)}
+#heard{font-size:14px;color:var(--dim);min-height:20px;text-align:center}
+#lang{font-size:13px;padding:6px 14px;border-radius:16px;border:1px solid var(--line);background:var(--panel);color:var(--dim)}
+@keyframes p{50%{box-shadow:0 0 0 12px rgba(245,185,66,.18)}}
+@media (prefers-reduced-motion:reduce){#mic.live{animation:none}}
 </style>
 </head>
 <body>
-<header><div class="bar">
-  <div class="logo"><span class="lg">U</span>My Daily Routine</div>
-  <nav><a data-v="today">Today</a><a data-v="graph">Graph</a><a data-v="coach">Coach</a><a data-v="history">History</a></nav>
-  <div style="display:flex;gap:8px;align-items:center"><span class="pill off" id="pill">Cloud: off</span><button class="ib" id="mode">Dark</button></div>
-</div></header>
-<main>
-
-<!-- AAJ -->
-<section class="view" id="v-today">
-  <h1>Today's record</h1><div class="sub">Fill it in from top to bottom, in the order of your day.</div>
-  <div class="key"><span><i class="dot r"></i>Red fields: calories eaten</span><span><i class="dot g"></i>Green fields: calories burned</span></div>
-  <div class="warn" id="warn" hidden>This device is not connected to your Google Sheet, so it only shows data saved on this device. <a id="warnGo">Connect it now</a> (History tab, Cloud card).</div>
-  <div class="today"><div class="formcol">
-  <div class="card"><label>Date</label><input type="date" id="date"></div>
-
-  <div class="card"><h2>Morning</h2><div class="grid">
-    <div><label>Wake-up time</label><input type="time" id="wake"></div>
-    <div><label>Running (km)</label><input type="number" id="runKm" min="0" step="0.1"></div>
-    <div><label>Running time (minutes)</label><input type="number" id="runMin" min="0"></div>
-    <div><label>Calories burned in running (auto, editable)</label><input class="bn" type="number" id="runCal" min="0"></div>
-  </div></div>
-
-  <div class="card"><h2>Breakfast</h2><div class="grid">
-    <div><label>Calories</label><input type="number" class="eat" id="bfCal" min="0"></div>
-    <div><label>What did you eat</label><input id="bfFood" placeholder="e.g. 2 roti, 1 katori sabzi"><button type="button" class="btn g s est" data-m="bf" style="margin-top:8px">Estimate calories (AI)</button><div class="note" id="bfNote"></div></div>
-  </div></div>
-
-  <div class="card"><h2>What I did during the day (comment)</h2>
-    <textarea id="comment" placeholder="What did you do between breakfast and lunch..."></textarea></div>
-
-  <div class="card"><h2>Lunch</h2><div class="grid">
-    <div><label>Calories</label><input type="number" class="eat" id="lunchCal" min="0"></div>
-    <div><label>What did you eat</label><input id="lunchFood" placeholder="e.g. 2 roti, 1 katori sabzi"><button type="button" class="btn g s est" data-m="lunch" style="margin-top:8px">Estimate calories (AI)</button><div class="note" id="lunchNote"></div></div>
-  </div></div>
-
-  <div class="card"><h2>Evening — Gym</h2>
-    <div class="grid" style="margin-bottom:12px"><div><label>Gym duration (minutes)</label><input type="number" id="gymMin" min="0"></div>
-      <div><label>Calories burned in gym incl. treadmill (auto, editable)</label><input type="number" class="bn" id="gymCal" min="0"></div></div>
-    <label>Exercises (name · sets · reps · kg)</label><div id="gymRows"></div>
-    <button class="btn g s" id="addEx">+ Add exercise</button>
-    <label style="margin-top:16px">Treadmill (type · minutes · speed km/h · incline % · calories)</label><div id="tmRows"></div>
-    <button class="btn g s" id="addTm">+ Add treadmill session</button></div>
-
-  <div class="card"><h2>Dinner</h2><div class="grid">
-    <div><label>Calories</label><input type="number" class="eat" id="dinCal" min="0"></div>
-    <div><label>What did you eat</label><input id="dinFood" placeholder="e.g. 2 roti, 1 katori sabzi"><button type="button" class="btn g s est" data-m="din" style="margin-top:8px">Estimate calories (AI)</button><div class="note" id="dinNote"></div></div>
-  </div></div>
-
-  <div class="card"><h2>Walking</h2><div class="grid">
-    <div><label>Walking (km)</label><input type="number" id="walkKm" min="0" step="0.1"></div>
-    <div><label>Walking time (minutes)</label><input type="number" id="walkMin" min="0"></div>
-    <div><label>Steps (optional)</label><input type="number" id="steps" min="0"><div class="note" id="walkNote"></div></div>
-    <div><label>Calories burned in walking (auto, editable)</label><input class="bn" type="number" id="walkCal" min="0"></div>
-  </div></div>
-
-  <div class="card"><h2>Daily calories</h2>
-    <label>Body's base burn (BMR), kcal per day. Usually 1800–2000. It is remembered for the next days.</label>
-    <input type="number" class="bn" id="bmr" min="0" placeholder="e.g. 1800">
-    <label style="margin-top:12px">Body weight today, kg (optional)</label><input type="number" id="wt" step="0.1" min="0"></div>
-
-  <div class="card"><h2>Summary</h2><div class="grid">
-    <div><label>Time used well (hours)</label><input type="number" id="useH" min="0" step="0.5"></div>
-    <div><label>Time wasted (hours)</label><input type="number" id="wasteH" min="0" step="0.5"></div>
-  </div>
-    <label style="margin-top:12px">Summary of the day</label>
-    <textarea id="summary" placeholder="How was the day, what to improve tomorrow..."></textarea>
-    
-  </div>
-
-  <div class="row"><button class="btn" id="save">Save</button><button class="btn g" id="clear">New / Clear</button></div>
-  <div class="status" id="status"></div>
-  </div>
-  <aside class="side"><div class="card"><h2>Today at a glance</h2><div id="totals"></div></div></aside>
-  </div>
-</section>
-
-<!-- GRAPH -->
-<section class="view" id="v-graph">
-  <h1>Graph</h1><div class="sub">The more entries you add, the fuller the graph gets.</div>
-  <div class="card goalbox" hidden></div>
-  <div class="stats" id="stats"></div>
-  <div class="card">
-    <div class="row" style="margin-bottom:12px">
-      <select id="gsel" style="flex:2">
-        <option value="cal">Calories (breakfast / lunch / dinner)</option>
-        <option value="run">Running (km)</option>
-        <option value="walk">Walking (km)</option>
-        <option value="gym">Gym (minute)</option>
-        <option value="burn">Calories: eaten (red) vs total burn (green)</option>
-        <option value="parts">Calories burned: base / gym / running / walking</option>
-        <option value="net">Net calories (surplus / deficit)</option>
-        <option value="wt">Body weight (kg)</option>
-        <option value="tm">Treadmill (km: walk / run)</option>
-        <option value="wake">Wake-up time</option>
-        <option value="time">Time: used well vs wasted (hours)</option>
-      </select>
-      <select id="grng" style="flex:1"><option value="7">7 days</option><option value="14">14 days</option><option value="30">30 days</option></select>
-    </div>
-    <div id="chart"></div><div class="tip" id="chartTip"></div><div class="leg" id="leg"></div>
-  </div>
-</section>
-
-<!-- COACH -->
-<section class="view" id="v-coach">
-  <h1>AI Coach</h1><div class="sub">Tell it what you ate, ask what to eat next, or which workout to do. It knows your profile and today's log.</div>
-  <div class="card" id="profCard" hidden></div>
-  <div class="card goalbox" hidden></div>
-  <div class="card"><h2>Chat</h2><div class="chat" id="chat"></div><div class="qk" id="quick"></div>
-    <div class="row" style="flex-wrap:nowrap"><input id="chatIn" placeholder="Type here and press Enter..."><button class="btn" id="chatSend">Send</button></div></div>
-</section>
-
-<!-- HISTORY -->
-<section class="view" id="v-history">
-  <h1>History</h1><div class="sub" id="hsub"></div>
-  <div class="row" style="margin-bottom:14px">
-    <select id="month" style="flex:1;min-width:140px"></select>
-    <button class="btn g s" id="csv">CSV</button><button class="btn g s" id="bk">Backup</button><button class="btn g s" id="wipe" style="color:var(--bad)">Delete all</button>
-    <button class="btn g s" id="rs">Restore</button><input type="file" id="rf" accept=".json" hidden>
-  </div>
-  <div class="card" id="cloud"><h2>Save to Google Sheet (cloud)</h2>
-    <label>Web App URL (from Apps Script)</label><input id="cUrl" placeholder="https://script.google.com/macros/s/.../exec">
-    <label style="margin-top:10px">Secret password (the KEY in your script)</label><input id="cKey" type="password">
-    <label style="margin-top:10px">Your private code (friends: choose your own secret code, 8+ characters. Owner: leave empty)</label><input id="cUid" placeholder="e.g. riya-4821-xk">
-    <div class="row" style="margin-top:10px"><button class="btn s" id="cSave">Connect &amp; Sync</button><button class="btn g s" id="cSync">Sync now</button><button class="btn g s" id="cUp">Upload from this device</button><button class="btn g s" id="cLink">Copy phone setup link</button></div>
-    <div class="status" id="cStat" style="color:var(--mute)"></div></div>
-  <div class="tl" id="tl"></div>
-</section>
-</main>
-
+<header><h1>Home control</h1><button id="conn">Tap to connect</button></header>
+<div id="list"></div>
+<footer>
+  <button id="mic" aria-label="Speak a command"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+  <div id="heard">Tap the mic and speak</div>
+  <button id="lang" aria-label="Change voice language"></button>
+</footer>
 <script>
-const $=id=>document.getElementById(id);
-const LSK="routine_data_v1";
-const FIELDS=["wake","runKm","runMin","bfCal","bfFood","comment","lunchCal","lunchFood","gymMin","gymCal","dinCal","dinFood","walkKm","walkMin","useH","wasteH","summary","bmr","runCal","walkCal","steps","wt"];
-let entries={},gym=[],tm=[];
-const pad=n=>String(n).padStart(2,"0");
-const fmt=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
-const today=()=>fmt(new Date());
-const num=v=>Number(v)||0;
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-function normKey(k){
-  if(/^\d{4}-\d{2}-\d{2}$/.test(k))return k;
-  const M={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
-  const m=String(k).match(/([A-Za-z]{3})\s+(\d{1,2})\s+(\d{4})\s+(\d{2}):(\d{2}):(\d{2})\s+GMT([+-])(\d{2})(\d{2})/);
-  if(m&&M[m[1]]!==undefined){const off=(m[7]==="-"?-1:1)*(Number(m[8])*60+Number(m[9]));
-    return fmt(new Date(Date.UTC(+m[3],M[m[1]],+m[2],+m[4],+m[5],+m[6])-off*60000))}
-  const d=new Date(k);return isNaN(d)?null:fmt(d)}
-function normObj(c){const o={};Object.keys(c).forEach(k=>{const n=normKey(k);if(!n)return;
-  if(!o[n]||num(c[k].updated)>=num(o[n].updated))o[n]=c[k]});return o}
-const dateTxt=(k,o)=>{const d=new Date(k+"T00:00");return isNaN(d)?String(k):d.toLocaleDateString("en-IN",o)};
-const totCal=e=>num(e.bfCal)+num(e.lunchCal)+num(e.dinCal);
-const tmCal=e=>(e.tm||[]).reduce((s,x)=>s+num(x.c),0);
-const tmKm=(e,t)=>(e.tm||[]).filter(x=>!t||x.t===t).reduce((s,x)=>s+num(x.sp)*num(x.m)/60,0);
-const burn=e=>(num(e.gymCal)||tmCal(e))+num(e.runCal)+num(e.walkCal);
-const r1=v=>Math.round(v*10)/10;
-const DEFBMR=()=>{if(prof)return String(baseOf(prof));try{return localStorage.getItem("routine_bmr")||"1800"}catch(e){return"1800"}};
-const bmrOf=e=>num(e.bmr)||num(DEFBMR());
-const totalBurn=e=>bmrOf(e)+burn(e);
-const net=e=>totCal(e)-totalBurn(e);
-const has=e=>Object.keys(e).length>0;
-const wakeH=e=>{if(!e||!e.wake)return 0;const[h,m]=e.wake.split(":").map(Number);return h+m/60};
-const hhmm=h=>pad(Math.floor(h))+":"+pad(Math.round((h%1)*60));
+const NAMES=['Fan','Dim light','Socket','Tubelight'],ON='ABCD',OFF='abcd';
+const SVC='6e400001-b5a3-f393-e0a9-e50e24dcca9e',RXC='6e400002-b5a3-f393-e0a9-e50e24dcca9e',TXC='6e400003-b5a3-f393-e0a9-e50e24dcca9e';
+const $=s=>document.querySelector(s),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const rows=NAMES.map((n,i)=>{
+  const b=document.createElement('button');
+  b.className='row';b.setAttribute('role','switch');b.setAttribute('aria-checked','false');
+  b.innerHTML='<span><b>'+n+'</b><small>Off</small></span><span class="sw"></span>';
+  b.onclick=()=>send(b.getAttribute('aria-checked')==='true'?OFF[i]:ON[i]);
+  $('#list').appendChild(b);return b;
+});
+function paint(s){rows.forEach((b,i)=>{const on=s[i]==='1';b.classList.toggle('on',on);b.setAttribute('aria-checked',on);b.querySelector('small').textContent=on?'On':'Off';});}
+function say(t,ok){const c=$('#conn');c.textContent=t;c.classList.toggle('ok',!!ok);}
 
-function lsLoad(){try{return JSON.parse(localStorage.getItem(LSK)||"{}")}catch(e){return{}}}
-function lsSave(){try{localStorage.setItem(LSK,JSON.stringify(entries))}catch(e){alert("Could not save in this browser. Please take a backup.")}}
+let dev,rx,tx,buf='',ready=false,busy=false;const dec=new TextDecoder();
+function attach(d){dev=d;dev.addEventListener('gattserverdisconnected',()=>{ready=false;say('Reconnecting…');keepAlive();});}
+async function link(){
+  const g=await dev.gatt.connect(),sv=await g.getPrimaryService(SVC);
+  rx=await sv.getCharacteristic(RXC);tx=await sv.getCharacteristic(TXC);
+  await tx.startNotifications();tx.addEventListener('characteristicvaluechanged',onData);
+  ready=true;say('Connected',true);send('S');
+}
+async function keepAlive(){
+  if(busy)return;busy=true;
+  while(!ready){
+    try{await link();}catch(e){try{dev.gatt.disconnect();}catch(_){}await sleep(2500);}
+  }
+  busy=false;
+}
+async function send(t){
+  if(!ready)return;
+  try{await rx.writeValue(new TextEncoder().encode(t+'\n'));}catch(e){say('Send failed');}
+}
+function onData(e){
+  buf+=dec.decode(e.target.value,{stream:true});let i;
+  while((i=buf.indexOf('\n'))>=0){
+    const l=buf.slice(0,i).trim();buf=buf.slice(i+1);
+    if(l.startsWith('STATUS:'))paint(l.slice(7));else if(l)$('#heard').textContent=l;
+  }
+}
+$('#conn').onclick=async()=>{
+  if(ready)return;
+  try{
+    if(!dev)attach(await navigator.bluetooth.requestDevice({filters:[{services:[SVC]}]}));
+    say('Connecting…');keepAlive();
+  }catch(e){say('Tap to connect');}
+};
+(async()=>{
+  if(!navigator.bluetooth){say('Open in Chrome');return;}
+  try{
+    const d=(await navigator.bluetooth.getDevices()).find(x=>x.name==='ESP32_HOME');
+    if(d){attach(d);say('Connecting…');keepAlive();}
+  }catch(e){}
+})();
 
-/* navigation */
-function go(){const h=location.hash.slice(1),v=["today","graph","history","coach"].includes(h)?h:"today";
-  document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
-  document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));
-  if(v==="graph")renderGraph();if(v==="history")renderHistory();}
-document.querySelectorAll("nav a").forEach(a=>a.onclick=()=>{location.hash=a.dataset.v});
-addEventListener("hashchange",go);
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition,mic=$('#mic'),heard=$('#heard'),lb=$('#lang');
+const MSG={'not-allowed':'Mic blocked. Allow Microphone for this site in Chrome settings','service-not-allowed':'Open this page in the Chrome browser','network':'Voice needs internet. Turn on mobile data','no-speech':'Heard nothing. Tap the mic and try again','audio-capture':'No microphone found','language-not-supported':'This language is not supported here'};
 
-/* theme */
-function setTheme(t){document.documentElement.dataset.theme=t;$("mode").textContent=t==="dark"?"Light":"Dark";try{localStorage.setItem("routine_theme",t)}catch(e){}}
-let th=null;try{th=localStorage.getItem("routine_theme")}catch(e){}
-setTheme(th||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));
-$("mode").onclick=()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark");
+const W={
+  on:['on','chalu','chaalu','jalao','jala','chala','chalao','start','ऑन','आन','ओन','चालू','चालु','जला','जलाओ','चला','चलाओ','खोल'],
+  off:['off','band','bandh','bujha','bujhao','stop','ऑफ','आफ','ओफ','बंद','बन्द','बुझा','बुझाओ'],
+  all:['all','sab','sabhi','everything','सब','सभी','ऑल'],
+  dev:[
+    ['fan','pankha','panka','1','one','ek','फैन','फेन','पंखा','पंखे','एक'],
+    ['light','lite','bulb','batti','dim','2','two','do','लाइट','लाईट','बल्ब','बत्ती','डिम','दो'],
+    ['socket','plug','charger','3','three','teen','सॉकेट','सोकेट','प्लग','चार्जर','तीन'],
+    ['tube','4','four','char','chaar','ट्यूब','टयूब','चार']
+  ]
+};
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/\u093c/g,'').normalize('NFC')
+  .replace(/tube\s*light|ट्यूब\s*लाइट|टयूब\s*लाइट/g,'tube').replace(/[.,!?।]/g,' ');
+function parse(raw){
+  const t=norm(raw),tk=t.split(/\s+/);
+  const has=l=>l.some(w=>/[a-z0-9]/.test(w)?tk.includes(w):t.includes(w));
+  const on=has(W.on),off=has(W.off);
+  if(on===off)return null;
+  if(has(W.all))return[on?'E':'e'];
+  const out=[];
+  W.dev.forEach((l,i)=>{if(has(l))out.push((on?ON:OFF)[i]);});
+  return out.length?out:null;
+}
 
-/* gym rows */
-function drawGym(){const box=$("gymRows");box.innerHTML="";
-  gym.forEach((x,i)=>{const r=document.createElement("div");r.className="ex";
-    r.innerHTML='<input placeholder="Exercise" value="'+esc(x.n)+'"><input type="number" placeholder="Sets" value="'+esc(x.s)+'"><input type="number" placeholder="Reps" value="'+esc(x.r)+'"><input type="number" placeholder="kg" value="'+esc(x.w)+'"><button title="Remove">✕</button>';
-    const ins=r.querySelectorAll("input");
-    ["n","s","r","w"].forEach((k,j)=>ins[j].oninput=()=>{x[k]=ins[j].value});
-    r.querySelector("button").onclick=()=>{gym.splice(i,1);drawGym()};
-    box.appendChild(r)});}
-function drawTm(){const box=$("tmRows");box.innerHTML="";
-  tm.forEach((x,i)=>{const r=document.createElement("div");r.className="tm";
-    r.innerHTML='<select><option value="walk">Walk</option><option value="run">Run</option></select><input type="number" placeholder="Minutes" min="0"><input type="number" placeholder="km/h" min="0" step="0.1"><input type="number" placeholder="Incline %" min="0" step="0.5"><input class="bn" type="number" placeholder="Calories" min="0"><button title="Remove">✕</button>';
-    const sel=r.querySelector("select");sel.value=x.t||"walk";x.t=sel.value;sel.onchange=()=>{x.t=sel.value;dirty=true;autoCalc()};
-    const ins=r.querySelectorAll("input");["m","sp","inc","c"].forEach((k,j)=>{ins[j].value=x[k]??"";ins[j].oninput=()=>{x[k]=ins[j].value;if(k==="c")x.manC=ins[j].value!=="";else autoCalc();updTot()}});
-    r.querySelector("button").onclick=()=>{tm.splice(i,1);drawTm();autoCalc()};
-    box.appendChild(r)});}
-$("addTm").onclick=()=>{tm.push({t:"walk",m:"",sp:"",inc:"",c:""});drawTm()};
-$("addEx").onclick=()=>{gym.push({n:"",s:"",r:"",w:""});drawGym()};
+let r=null,lang='en-IN';
+try{lang=localStorage.getItem('lang')||'en-IN';}catch(_){}
+function showLang(){lb.textContent=lang==='hi-IN'?'Voice: Hindi':'Voice: English';}
+showLang();
+lb.onclick=()=>{
+  lang=lang==='hi-IN'?'en-IN':'hi-IN';
+  try{localStorage.setItem('lang',lang);}catch(_){}
+  if(r)r.lang=lang;
+  showLang();
+};
 
-/* form */
-function updTot(){const e={bfCal:$("bfCal").value,lunchCal:$("lunchCal").value,dinCal:$("dinCal").value,gymCal:$("gymCal").value,runCal:$("runCal").value,walkCal:$("walkCal").value,bmr:$("bmr").value,tm};
-  const u=num($("useH").value),w=num($("wasteH").value),eat=totCal(e),bt=totalBurn(e),n=eat-bt,g=num(e.gymCal)||tmCal(e);
-  const lt=prof?Math.max(floorIn(prof),bt+goalNet(prof))-eat:0;const T=(c,l,v)=>"<div class='tile "+c+"'><span>"+l+"</span><b>"+v+"</b><small>kcal</small></div>";
-  $("totals").innerHTML="<div class='tiles'>"+T("eat","Eaten",eat)+T("burn","Burned",bt)+T(eat?(n>0?"eat":"burn"):"","Net"+(eat?(n>0?" surplus":" deficit"):""),(n>0?"+":"")+n)+(prof?T(lt>=0?"burn":"eat","Left to eat",lt):"")+"</div>"
-   +"<div class='brk'>Burn = base "+bmrOf(e)+" + gym "+g+" + running "+num(e.runCal)+" + walking "+num(e.walkCal)+"</div>"
-   +((u||w)?"<div class='brk'>Used well: <b>"+u+"h</b> · Wasted: <b>"+w+"h</b></div>":"");}
-document.querySelectorAll("#v-today input,#v-today textarea").forEach(i=>i.addEventListener("input",updTot));
-function fill(d){const e=entries[d]||{};FIELDS.forEach(k=>$(k).value=e[k]??"");if(!$("bmr").value)$("bmr").value=DEFBMR();Object.keys(manual).forEach(k=>delete manual[k]);Object.assign(manual,e.man||{});
-  gym=JSON.parse(JSON.stringify(e.gym||[]));drawGym();tm=JSON.parse(JSON.stringify(e.tm||[]));drawTm();updTot();}
-$("date").value=today();
-$("date").onchange=()=>{fill($("date").value);$("status").textContent=""};
-$("clear").onclick=()=>{$("date").value=today();fill("__none__");$("status").textContent=""};
-$("save").onclick=()=>{const d=$("date").value;if(!d){alert("Please choose a date");return}
-  const e={};FIELDS.forEach(k=>e[k]=$(k).value);try{if(e.bmr)localStorage.setItem("routine_bmr",e.bmr)}catch(x){}e.man=Object.assign({},manual);if(prof&&d===today()&&num(e.wt)){if(!prof.start)prof.start=prof.weight;prof.weight=num(e.wt);prof.updated=Date.now();saveProf();cloudPush("profile",prof)}e.gym=gym.filter(x=>x.n||x.s||x.r||x.w);e.tm=tm.filter(x=>x.m||x.sp||x.c);
-  e.updated=Date.now();entries[d]=e;lsSave();dirty=false;$("status").textContent="Saved. You can see it in History and Graph.";cloudPush(d,e);renderGoal();};
-
-/* chart */
-function chart(days,series,o){
-  const W=600,H=230,L=34,B=24,T=14,iw=W-L-6,ih=H-T-B;
-  const n=days.length,gw=iw/n,k=o.stacked?1:series.length,bw=Math.min(28,gw*0.7/k);
-  const tot=days.map((_,i)=>o.stacked?series.reduce((s,x)=>s+x.vals[i],0):Math.max(...series.map(x=>x.vals[i])));
-  let mx=Math.max(...tot,1);mx=Math.ceil(mx*1.1);
-  let g='';
-  for(let t=0;t<=4;t++){const y=T+ih-ih*t/4;g+='<line x1="'+L+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="var(--line)"/><text x="'+(L-4)+'" y="'+(y+3)+'" text-anchor="end">'+(o.yfmt?o.yfmt(mx*t/4):(mx>=20?Math.round(mx*t/4):Math.round(mx*t/4*10)/10))+'</text>'}
-  days.forEach((d,i)=>{const cx=L+gw*i+gw/2;let acc=0;
-    series.forEach((s,j)=>{const v=s.vals[i];if(!v)return;const h=ih*v/mx;
-      const x=o.stacked?cx-bw/2:cx-bw*k/2+bw*j;const y=o.stacked?T+ih-ih*acc/mx-h:T+ih-h;
-      g+='<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+h+'" rx="3" fill="'+s.color+'"><title>'+d+': '+(o.yfmt?o.yfmt(v):v)+'</title></rect>';
-      if(o.stacked)acc+=v});
-    g+='<rect class="hit" data-i="'+i+'" x="'+(L+gw*i)+'" y="'+T+'" width="'+gw+'" height="'+ih+'" fill="transparent" style="cursor:pointer"/>';
-    if(n<=14||i%2===0)g+='<text x="'+cx+'" y="'+(H-8)+'" text-anchor="middle">'+d.slice(8)+'</text>'});
-  return '<svg viewBox="0 0 '+W+' '+H+'" width="100%">'+g+'</svg>';}
-function renderGraph(){
-  renderGoal();
-  const n=num($("grng").value),days=[];for(let i=n-1;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(fmt(d))}
-  const E=days.map(k=>entries[k]||{}),m=$("gsel").value;let series,o={};
-  const S=(name,color,f)=>({name,color,vals:E.map(f)});
-  if(m==="cal"){series=[S("Breakfast","var(--r1)",e=>num(e.bfCal)),S("Lunch","var(--r2)",e=>num(e.lunchCal)),S("Dinner","var(--r3)",e=>num(e.dinCal))];o.stacked=true}
-  else if(m==="run")series=[S("Running km","var(--c1)",e=>num(e.runKm))];
-  else if(m==="walk")series=[S("Walking km","var(--c2)",e=>num(e.walkKm))];
-  else if(m==="gym")series=[S("Gym minutes","var(--c3)",e=>num(e.gymMin))];
-  else if(m==="burn")series=[S("Eaten (intake)","var(--bad)",totCal),S("Total burn (base + exercise)","var(--c2)",e=>has(e)?totalBurn(e):0)];
-  else if(m==="parts"){series=[S("Base (BMR)","var(--g4)",e=>has(e)?bmrOf(e):0),S("Gym","var(--g1)",e=>num(e.gymCal)||tmCal(e)),S("Running","var(--g2)",e=>num(e.runCal)),S("Walking","var(--g3)",e=>num(e.walkCal))];o.stacked=true}
-  else if(m==="wt")series=[S("Weight (kg)","var(--c1)",e=>num(e.wt))];
-  else if(m==="net")series=[S("Surplus","var(--bad)",e=>has(e)&&totCal(e)?Math.max(0,net(e)):0),S("Deficit","var(--c2)",e=>has(e)&&totCal(e)?Math.max(0,-net(e)):0)];
-  else if(m==="tm"){series=[S("Walk km","var(--c2)",e=>r1(tmKm(e,"walk"))),S("Run km","var(--c1)",e=>r1(tmKm(e,"run")))];o.stacked=true}
-  else if(m==="wake"){series=[S("Wake-up time","var(--c4)",e=>wakeH(e))];o.yfmt=hhmm}
-  else series=[S("Used well","var(--c2)",e=>num(e.useH)),S("Wasted","var(--bad)",e=>num(e.wasteH))];
-  $("chart").innerHTML=chart(days,series,o);
-  window._ch={days,series,o,E,unit:{cal:"kcal",run:"km",walk:"km",gym:"min",burn:"kcal",parts:"kcal",wt:"kg",net:"kcal",tm:"km",time:"h"}[m]||""};attachTips();
-  $("leg").innerHTML=series.map(s=>'<span><i style="background:'+s.color+'"></i>'+s.name+'</span>').join("");
-  const have=E.filter(e=>Object.keys(e).length);const avg=f=>have.length?Math.round(have.reduce((s,e)=>s+f(e),0)/have.length*10)/10:"–";
-  const sum=f=>Math.round(have.reduce((s,e)=>s+f(e),0)*10)/10;
-  const W=have.filter(e=>e.wake);
-  const items=[[have.length+"/"+n,"Days with entries"],[avg(totCal)+" kcal","Avg calories eaten/day"],[sum(e=>num(e.runKm))+" km","Total running"],[sum(e=>num(e.walkKm))+" km","Total walking"],[avg(burn)+" kcal","Avg exercise burn"],[(()=>{const q=have.filter(e=>totCal(e));return q.length?Math.round(q.reduce((a,e)=>a+net(e),0)/q.length):"–"})()+" kcal","Avg net (eaten − burned)"],[avg(e=>num(e.useH))+"h","Avg time used well"],[avg(e=>num(e.wasteH))+"h","Avg time wasted"],[W.length?hhmm(W.reduce((s,e)=>s+wakeH(e),0)/W.length):"–","Avg wake-up time"]];
-  $("stats").innerHTML=items.map(x=>'<div class="stat"><b>'+x[0]+'</b><span>'+x[1]+' · '+n+' days</span></div>').join("");}
-function showTip(i){const c=window._ch;if(!c)return;const d=c.days[i],e=c.E[i];
-  const f=v=>!v?"–":c.o.yfmt?c.o.yfmt(v):(Math.round(v*10)/10)+(c.unit?" "+c.unit:"");
-  let h="<b>"+dateTxt(d,{weekday:"long",day:"numeric",month:"short",year:"numeric"})+"</b>";
-  if(!has(e))h+="<div class='brk'>No entry for this day.</div>";
-  else{c.series.forEach(s=>{h+="<div class='tl2'><i style='background:"+s.color+"'></i>"+s.name+": <b>"+f(s.vals[i])+"</b></div>"});
-    if(totCal(e))h+="<div class='brk'>Day summary: eaten "+totCal(e)+" kcal · burned "+totalBurn(e)+" kcal · net "+(net(e)>0?"+":"")+net(e)+" kcal</div>";
-    h+="<div class='acts'><a id='tipOpen'>Open this day</a></div>"}
-  $("chartTip").innerHTML=h;
-  document.querySelectorAll("#chart .hit").forEach((r,j)=>{r.setAttribute("fill",j===i?"var(--c1)":"transparent");r.setAttribute("fill-opacity",j===i?".1":"1")});
-  if($("tipOpen"))$("tipOpen").onclick=()=>{$("date").value=d;fill(d);location.hash="today";scrollTo(0,0)}}
-function attachTips(){document.querySelectorAll("#chart .hit").forEach(r=>{r.onclick=()=>showTip(+r.dataset.i);r.onmouseenter=()=>showTip(+r.dataset.i)});showTip(window._ch.days.length-1)}
-$("gsel").onchange=renderGraph;$("grng").onchange=renderGraph;
-
-/* history */
-function renderHistory(){
-  const keys=Object.keys(entries).sort().reverse(),months=[...new Set(keys.map(k=>k.slice(0,7)))],cur=$("month").value||"all";
-  $("month").innerHTML='<option value="all">All months</option>'+months.map(m=>'<option value="'+m+'">'+dateTxt(m+"-01",{month:"long",year:"numeric"})+'</option>').join("");
-  $("month").value=months.includes(cur)?cur:"all";
-  const shown=keys.filter(k=>$("month").value==="all"||k.startsWith($("month").value));
-  $("hsub").textContent=shown.length+" entries";
-  $("tl").innerHTML=shown.length?"":'<div class="empty">No entries yet. Add your first one in the "Today" tab.</div>';
-  shown.forEach(k=>{const e=entries[k],it=document.createElement("div");it.className="item";
-    const L=(a,b,c)=>b?'<div class="ln '+(c||'')+'"><b>'+a+':</b> '+b+'</div>':'';
-    const gy=(e.gym||[]).map(x=>esc(x.n)+(x.s||x.r?" "+esc(x.s||"?")+"×"+esc(x.r||"?"):"")+(x.w?" @"+esc(x.w)+"kg":"")).join(", ");
-    it.innerHTML='<h3>'+dateTxt(k,{weekday:"long",day:"numeric",month:"short",year:"numeric"})+'</h3>'
-     +L("Woke up",esc(e.wake))
-     +L("Running",(e.runKm?esc(e.runKm)+" km":"")+(e.runMin?" / "+esc(e.runMin)+" min":"")+(e.runCal?" · "+esc(e.runCal)+" kcal":""),"grn")
-     +L("Breakfast",(e.bfCal?esc(e.bfCal)+" kcal":"")+(e.bfFood?" — "+esc(e.bfFood):""),"red")
-     +L("Comment",esc(e.comment))
-     +L("Lunch",(e.lunchCal?esc(e.lunchCal)+" kcal":"")+(e.lunchFood?" — "+esc(e.lunchFood):""),"red")
-     +L("Gym",(e.gymMin?esc(e.gymMin)+" min · ":"")+gy)
-     +L("Gym burn",e.gymCal?esc(e.gymCal)+" kcal":"","grn")
-     +L("Treadmill",(e.tm||[]).map(x=>(x.t==="run"?"Run ":"Walk ")+num(x.m)+" min @ "+num(x.sp)+" km/h"+(num(x.inc)?", incline "+num(x.inc)+"%":"")+(num(x.c)?" · "+num(x.c)+" kcal":"")).join("<br>"),"grn")
-     +L("Dinner",(e.dinCal?esc(e.dinCal)+" kcal":"")+(e.dinFood?" — "+esc(e.dinFood):""),"red")
-     +L("Walking",(e.walkKm?esc(e.walkKm)+" km":"")+(e.walkMin?" / "+esc(e.walkMin)+" min":"")+(e.walkCal?" · "+esc(e.walkCal)+" kcal":""),"grn")
-     +L("Total eaten",totCal(e)?totCal(e)+" kcal":"","red")
-     +L("Total burned",has(e)?totalBurn(e)+" kcal (base "+bmrOf(e)+" + exercise "+burn(e)+")":"","grn")
-     +L("Net",totCal(e)?(net(e)>0?"+":"")+net(e)+" kcal (eaten "+totCal(e)+" − burned "+totalBurn(e)+")":"")
-     +L("Time",(e.useH||e.wasteH)?"Used well "+num(e.useH)+"h · Wasted "+num(e.wasteH)+"h":"")
-     +L("Summary",esc(e.summary))
-     +'<div class="acts"><a class="ed">Edit</a><a class="dl">Delete</a></div>';
-    it.querySelector(".ed").onclick=()=>{$("date").value=k;fill(k);location.hash="today";scrollTo(0,0)};
-    it.querySelector(".dl").onclick=()=>{if(confirm(k+" - delete this entry?")){delete entries[k];lsSave();renderHistory();cloudDel(k)}};
-    $("tl").appendChild(it)});}
-$("month").onchange=renderHistory;
-
-/* export / import */
-function dlFile(n,t,m){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:m+";charset=utf-8"}));a.download=n;a.click()}
-$("bk").onclick=()=>dlFile("routine-backup.json",JSON.stringify(entries),"application/json");
-$("rs").onclick=()=>$("rf").click();
-$("rf").onchange=()=>{const f=$("rf").files[0];if(!f)return;const r=new FileReader();
-  r.onload=()=>{try{const o=JSON.parse(r.result);entries=Object.assign(entries,o);lsSave();Object.keys(o).forEach(k=>cloudPush(k,entries[k]));renderHistory();alert("Restored ")}catch(e){alert("This file is not valid")}};r.readAsText(f)};
-$("csv").onclick=()=>{const h=["date",...FIELDS,"gym","treadmill","total_cal"];
-  const rows=[h].concat(Object.keys(entries).sort().map(k=>{const e=entries[k];return [k,...FIELDS.map(f=>e[f]),(e.gym||[]).map(x=>[x.n,x.s,x.r,x.w].join("/")).join("|"),(e.tm||[]).map(x=>[x.t,x.m,x.sp,x.inc,x.c].join("/")).join("|"),totCal(e)]}));
-  dlFile("routine.csv","\ufeff"+rows.map(r=>r.map(x=>'"'+String(x??"").replace(/"/g,'""')+'"').join(",")).join("\n"),"text/csv")};
-
-/* cloud sync (Google Apps Script). The cloud is the source of truth. */
-let dirty=false;document.addEventListener("input",e=>{if(e.target.closest("#v-today"))dirty=true});
-if(location.hash.slice(0,3)==="#s="){try{const c=JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(3)))));if(c.url)localStorage.setItem("routine_cloud",JSON.stringify(c))}catch(e){}
-  history.replaceState(null,"",location.pathname+location.search)}
-let cfg={url:"",key:"",uid:""};try{Object.assign(cfg,JSON.parse(localStorage.getItem("routine_cloud")||"{}"))}catch(e){}
-$("cUrl").value=cfg.url||"";$("cKey").value=cfg.key||"";$("cUid").value=cfg.uid||"";
-const cmsg=t=>{$("cStat").textContent=t};
-let pend={save:{},del:{}};try{Object.assign(pend,JSON.parse(localStorage.getItem("routine_pending")||"{}"))}catch(e){}
-pend.save=pend.save||{};pend.del=pend.del||{};
-const pSave=()=>{try{localStorage.setItem("routine_pending",JSON.stringify(pend))}catch(e){}};
-async function cReq(url,opt){let r;
-  try{r=await fetch(url,opt)}catch(e){throw new Error("cannot reach the URL. Check the Web App URL (it must end with /exec) and your internet")}
-  const t=await r.text();let j;
-  try{j=JSON.parse(t)}catch(e){throw new Error(t.trim().charAt(0)==="<"?"Google sent a web page instead of data. In Deploy settings, Who has access must be Anyone, and use the /exec URL of the latest deployment":"unexpected reply from the script")}
-  if(j&&j.error)throw new Error(j.error==="key"?"the password does not match the KEY in the script":"script error: "+j.error);return j}
-const cPost=b=>cReq(cfg.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({key:cfg.key,uid:cfg.uid||""},b))});
-const cGet=()=>cReq(cfg.url+"?key="+encodeURIComponent(cfg.key)+"&uid="+encodeURIComponent(cfg.uid||""));
-function pill(t,c){$("pill").textContent=t;$("pill").className="pill "+c}
-let flushing=null;
-function flush(){if(flushing)return flushing;
-  const p=(async()=>{for(;;){
-    const dk=Object.keys(pend.del)[0];if(dk){await cPost({action:"delete",date:dk});delete pend.del[dk];pSave();continue}
-    const sk=Object.keys(pend.save)[0];if(sk){await cPost({action:"save",date:sk,entry:pend.save[sk]});delete pend.save[sk];pSave();continue}
-    break}})();
-  flushing=p;const done=()=>{if(flushing===p)flushing=null};p.then(done,done);return p}
-async function cloudPush(d,e){pend.save[d]=e;delete pend.del[d];pSave();if(!cfg.url)return;
-  try{await flush();cmsg("Saved to the cloud.");pill("Cloud: synced","ok")}catch(x){cmsg("Cloud save failed: "+x.message+". It will retry on the next sync.");pill("Cloud: error","err")}}
-async function cloudDel(d){pend.del[d]=1;delete pend.save[d];pSave();if(!cfg.url)return;
-  try{await flush();cmsg("Deleted from the cloud.");pill("Cloud: synced","ok")}catch(x){cmsg("Cloud delete failed: "+x.message+". It will retry on the next sync.");pill("Cloud: error","err")}}
-async function cloudSync(){if(!cfg.url)return;cmsg("Syncing...");
-  try{await flush();
-    const c=await cGet();
-    const o=normObj(c);const weird=Object.keys(c).some(k=>k!=="profile"&&!/^\d{4}-\d{2}-\d{2}$/.test(k));
-    entries=o;lsSave();updWarn();
-    const cp=c.profile;if(cp&&typeof cp==="object"&&(!prof||num(cp.updated)>=num(prof.updated))){prof=cp;saveProf()}else if(prof&&!cp){pend.save.profile=prof;pSave()}
-    renderProf();updTot();if(!dirty)fill($("date").value);renderHistory();renderGraph();
-    cmsg("Sync complete at "+new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})+". "+Object.keys(entries).length+" entries in the cloud."+(weird?" Note: your Google script is the OLD version and sends broken dates. Paste the new Code.gs, run cleanUp, and deploy a new version.":""));pill("Cloud: synced","ok")}
-  catch(x){cmsg("Sync failed: "+x.message);pill("Cloud: error","err")}}
-$("cSave").onclick=()=>{const old=cfg.url+"|"+(cfg.uid||"");cfg={url:$("cUrl").value.trim(),key:$("cKey").value,uid:$("cUid").value.trim()};
-  try{localStorage.setItem("routine_cloud",JSON.stringify(cfg))}catch(e){}
-  updWarn();if(cfg.url&&cfg.url+"|"+cfg.uid!==old)Object.keys(entries).forEach(k=>{pend.save[k]=entries[k]});pSave();cloudSync()};
-$("cSync").onclick=cloudSync;
-function updWarn(){$("warn").hidden=!!cfg.url;if(!cfg.url)pill("Cloud: off","off")}
-$("cUp").onclick=async()=>{if(!cfg.url){cmsg("Connect first.");return}Object.keys(entries).forEach(k=>{pend.save[k]=entries[k]});pSave();cmsg("Uploading...");
-  try{await flush();cmsg("Uploaded "+Object.keys(entries).length+" entries from this device.");cloudSync()}catch(x){cmsg("Upload failed: "+x.message);pill("Cloud: error","err")}};
-$("warnGo").onclick=()=>{location.hash="history";setTimeout(()=>$("cUrl").focus(),50)};
-$("cLink").onclick=async()=>{if(!cfg.url){cmsg("Connect first, then copy the link.");return}
-  const link=location.origin+location.pathname+"#s="+btoa(unescape(encodeURIComponent(JSON.stringify(cfg))));
-  try{await navigator.clipboard.writeText(link);cmsg("Setup link copied. Open it once on your phone. It contains your password, so do not share it.")}catch(e){prompt("Copy this link:",link)}};
-updWarn();
-$("wipe").onclick=async()=>{if(!confirm("Delete ALL entries? They will also be removed from the Google Sheet."))return;
-  if(prompt('Type DELETE to confirm')!=="DELETE")return;
-  await cloudSync();Object.keys(entries).forEach(k=>{pend.del[k]=1;delete pend.save[k]});entries={};lsSave();pSave();renderHistory();renderGraph();
-  if(cfg.url){try{await flush();cmsg("All entries deleted.")}catch(x){cmsg("Cloud delete failed: "+x.message)}}};
-
-
-/* ===================== profile, auto calories, AI coach ===================== */
-let prof=null;try{prof=JSON.parse(localStorage.getItem("routine_profile")||"null")}catch(e){}
-const saveProf=()=>{try{localStorage.setItem("routine_profile",JSON.stringify(prof))}catch(e){}};
-const bmrCalc=p=>Math.round(10*p.weight+6.25*p.height-5*p.age+(p.gender==="male"?5:-161));
-const baseOf=p=>Math.round(bmrCalc(p)*1.2/10)*10;
-const goalNet=p=>p.goal==="lose"?-500:p.goal==="gain"?400:0;
-const floorIn=p=>p.gender==="male"?1500:1200;
-const curW=()=>num($("wt").value)||num(prof&&prof.weight)||70;
-const manual={};
-["runCal","walkCal","gymCal"].forEach(id=>$(id).addEventListener("input",()=>{manual[id]=$(id).value!==""}));
-
-/* automatic calories (ACSM walking/running equations, net of resting burn, so BMR is not counted twice) */
-function kcalNet(type,kmh,min,inc){const s=kmh*1000/60,g=num(inc)/100,vo=type==="run"?0.2*s+0.9*s*g:0.1*s+1.8*s*g;return Math.round(vo*curW()*5/1000*min)}
-function setAuto(id,v){if(manual[id])return;$(id).value=v>0?v:""}
-function autoCalc(){
-  let rk=num($("runKm").value),rm=num($("runMin").value);if(rk&&!rm)rm=rk/9*60;
-  setAuto("runCal",rk&&rm?kcalNet("run",rk/(rm/60),rm,0):0);
-  let wk=num($("walkKm").value),wm=num($("walkMin").value),st=num($("steps").value);
-  $("walkNote").textContent="";
-  if(!wk&&st){wk=st*(num(prof&&prof.height)||170)*0.415/100000;$("walkNote").textContent="about "+(Math.round(wk*100)/100)+" km"}
-  if(wk&&!wm)wm=wk/5*60;
-  setAuto("walkCal",wk&&wm?kcalNet("walk",wk/(wm/60),wm,0):0);
-  let tmMin=0;tm.forEach((x,i)=>{tmMin+=num(x.m);if(!x.manC){const c=num(x.m)&&num(x.sp)?kcalNet(x.t,num(x.sp),num(x.m),x.inc):"";x.c=c;
-    const el=$("tmRows").children[i];if(el)el.querySelectorAll("input")[3].value=c}});
-  setAuto("gymCal",Math.round(tmCal({tm})+Math.max(0,num($("gymMin").value)-tmMin)*0.044*curW()));
-  updTot()}
-["runKm","runMin","walkKm","walkMin","steps","gymMin","wt"].forEach(id=>$(id).addEventListener("input",autoCalc));
-
-/* AI through your Google script (the API key stays inside Google, never on the website) */
-async function ai(system,messages,max){
-  if(!cfg.url)throw new Error("connect your Google Sheet first (History tab)");
-  const m=messages.slice(-10);while(m.length&&m[0].role!=="user")m.shift();
-  const j=await cPost({action:"ai",system,messages:m,max_tokens:max||600});
-  if(typeof j.text!=="string")throw new Error("your Google script is the old version and has no AI support. Paste the new Code.gs and deploy a NEW version (Deploy > Manage deployments > pencil > Version: New version > Deploy)");
-  if(!j.text.trim())throw new Error("the AI sent an empty reply, please try again");
-  return j.text}
-const FOOD_SYS="You estimate the calories of Indian home-style food. The user describes what they ate (English or Hinglish). Reply in exactly this plain format and nothing else, one line per item and then a total line:\n1 roti = 100 kcal\n1 katori sabzi = 130 kcal\nTOTAL = 230 kcal\nIf a quantity is missing, assume a normal home portion. Be realistic and round to 5 kcal.";
-function parseFood(t){const items=[];
-  t.split("\n").forEach(l=>{const m=l.match(/^[\s\-•*]*(.+?)\s*[=:]\s*~?\s*(\d[\d,]*)\s*kcal/i);if(m&&!/^\W*total/i.test(m[1]))items.push({name:m[1].replace(/\*+/g,"").trim(),kcal:Number(m[2].replace(/,/g,""))})});
-  const tm=t.match(/total\D{0,12}(\d[\d,]*)/i),total=tm?Number(tm[1].replace(/,/g,"")):items.reduce((a,i)=>a+i.kcal,0);
-  if(!(total>0))throw new Error("I could not read calories from the AI reply: "+t.slice(0,90));return{items,total}}
-const foodAuto={};
-async function estimate(m){const f=$(m+"Food").value.trim(),note=$(m+"Note");
-  if(!f){note.textContent="Type what you ate first.";return}
-  note.textContent="Estimating calories...";
-  try{const r=parseFood(await ai(FOOD_SYS,[{role:"user",content:f}],300)),tot=Math.round(r.total);
-    $(m+"Cal").value=tot;foodAuto[m]=true;dirty=true;updTot();
-    note.textContent=r.items.map(i=>i.name+" "+i.kcal).join(" + ")+" = "+tot+" kcal (AI estimate, you can edit)"}
-  catch(e){note.textContent="Could not estimate: "+e.message}}
-document.querySelectorAll(".est").forEach(b=>b.onclick=()=>estimate(b.dataset.m));
-["bf","lunch","din"].forEach(m=>{
-  $(m+"Food").addEventListener("change",()=>{if(cfg.url&&$(m+"Food").value.trim()&&(!$(m+"Cal").value||foodAuto[m]))estimate(m)});
-  $(m+"Cal").addEventListener("input",()=>{foodAuto[m]=false})});
-
-/* coach chat */
-const COACH_SYS="You are a friendly, practical fitness and nutrition coach inside a personal daily-routine tracker. The user is Indian, so suggest Indian foods (roti, dal, sabzi, paneer, eggs, curd, rice, fruits, sprouts) with approximate calories and quantities. Use only the data given below; never invent numbers. Keep answers short (under 180 words) and concrete. When the user tells you what they ate, estimate its calories and say how many calories are left for the day. Whenever the user says they actually ate or drank something (past tense, not a question or a plan), end your reply with one tag line per meal in exactly this format: [[LOG meal=lunch kcal=230 food=\"1 roti, 1 katori sabzi\"]]. meal must be breakfast, lunch or dinner: use the meal the user names, otherwise choose by the current time in TODAY (before 11:00 breakfast, 11:00 to 16:00 lunch, after that dinner; snacks go to the nearest meal). Never mention or explain the tag. Reply in the same language style as the user (English, or Hinglish in Roman letters). Never advise eating below 1500 kcal/day for men or 1200 for women. This is general guidance, not medical advice; for medical conditions suggest a doctor.";
-function ctx(){
-  const last7=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=fmt(d),e=entries[k];if(e)last7.push({date:k,eaten:totCal(e),burned:totalBurn(e),net:net(e),runKm:num(e.runKm),walkKm:num(e.walkKm),gymMin:num(e.gymMin),weight:e.wt||""})}
-  const e={bfCal:$("bfCal").value,lunchCal:$("lunchCal").value,dinCal:$("dinCal").value,gymCal:$("gymCal").value,runCal:$("runCal").value,walkCal:$("walkCal").value,bmr:$("bmr").value,tm};
-  const goalIn=prof?Math.max(floorIn(prof),totalBurn(e)+goalNet(prof)):null;
-  return "PROFILE: "+JSON.stringify(prof)+"\nTARGETS: baseDailyBurn="+(prof?baseOf(prof):"")+", goalNetPerDay="+(prof?goalNet(prof):"")+", intakeGoalForTodayIncludingExerciseSoFar="+goalIn+"\nTODAY (live form): "+JSON.stringify({time:new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}),
-    breakfast:{kcal:num(e.bfCal),food:$("bfFood").value},lunch:{kcal:num(e.lunchCal),food:$("lunchFood").value},dinner:{kcal:num(e.dinCal),food:$("dinFood").value},
-    eaten:totCal(e),burned:totalBurn(e),runningKm:num($("runKm").value),walkingKm:num($("walkKm").value),steps:num($("steps").value),gymMinutes:num($("gymMin").value),exercises:gym,treadmill:tm,hoursUsedWell:$("useH").value,hoursWasted:$("wasteH").value})+"\nLAST 7 DAYS: "+JSON.stringify(last7)+"\nGOAL_ETA: "+JSON.stringify(goalEta())}
-let chat=[];try{chat=JSON.parse(localStorage.getItem("routine_chat")||"[]")}catch(e){}
-function bubble(role,text){const d=document.createElement("div");d.className="msg "+(role==="user"?"me":"bot");d.textContent=text;$("chat").appendChild(d);$("chat").scrollTop=$("chat").scrollHeight;return d}
-function addMsg(role,text){chat.push({role,content:text});chat=chat.slice(-30);try{localStorage.setItem("routine_chat",JSON.stringify(chat))}catch(e){}return bubble(role,text)}
-const mealKey=m=>m==="breakfast"?"bf":m==="lunch"?"lunch":"din";
-function logMeal(meal,kcal,food){const d=today(),k=mealKey(meal);
-  if($("date").value===d&&dirty)$("save").onclick();
-  const e=entries[d]=Object.assign({},entries[d]||{});
-  e[k+"Cal"]=String(num(e[k+"Cal"])+kcal);e[k+"Food"]=(e[k+"Food"]?e[k+"Food"]+", ":"")+food;
-  e.updated=Date.now();lsSave();cloudPush(d,e);
-  if($("date").value===d){fill(d);dirty=false}renderGoal()}
-async function coachAsk(q){addMsg("user",q);const t=bubble("assistant","Thinking...");
-  try{let r=await ai(COACH_SYS+"\n\n"+ctx(),chat,700);t.remove();const logs=[];
-    r=r.replace(/\[\[\s*LOG[^\]]*\]\]/gi,tag=>{const m=tag.match(/meal\s*=\s*(breakfast|lunch|dinner)/i),k=tag.match(/kcal\s*=\s*(\d+)/i),f=tag.match(/food\s*=\s*"([^"]*)"/i);
-      if(m&&k)logs.push({meal:m[1].toLowerCase(),kcal:Number(k[1]),food:f?f[1]:""});return""}).trim();
-    logs.forEach(l=>logMeal(l.meal,l.kcal,l.food));
-    if(logs.length)r+="\n\nAdded to today's log: "+logs.map(l=>l.meal+" +"+l.kcal+" kcal").join(", ")+".";
-    addMsg("assistant",r)}catch(e){t.textContent="Could not reach the coach: "+e.message}}
-const QUICK=["Review my day so far","What should I eat next?","Which workout should I do today?","Plan tomorrow for me"];
-function showChips(list){$("quick").innerHTML="";list.forEach(t=>{const b=document.createElement("button");b.textContent=t;b.onclick=()=>send(t);$("quick").appendChild(b)})}
-
-/* onboarding (the coach asks the questions) */
-const num2=(lo,hi)=>v=>{const n=parseFloat(v);return n>=lo&&n<=hi?n:null};
-const STEPS=[
- {k:"name",q:"Hi! I'm your coach. What's your name?",parse:v=>v.trim().slice(0,40)||null},
- {k:"gender",q:n=>"Nice to meet you, "+n+"! What is your gender?",chips:["Male","Female"],parse:v=>/^f/i.test(v)?"female":/^m/i.test(v)?"male":null},
- {k:"age",q:"How old are you?",parse:num2(10,100)},
- {k:"height",q:"Your height in cm? (for example 175)",parse:num2(120,230)},
- {k:"weight",q:"Your current weight in kg?",parse:num2(30,250)},
- {k:"goal",q:"What is your goal?",chips:["Lose weight","Gain weight","Maintain"],parse:v=>/los/i.test(v)?"lose":/gain/i.test(v)?"gain":/main/i.test(v)?"maintain":null},
- {k:"target",q:"What is your target weight in kg?",skip:p=>p.goal==="maintain",parse:num2(30,250)}];
-let ob=null;
-const qText=s=>typeof s.q==="function"?s.q(ob.p.name):s.q;
-function startOb(){ob={i:0,p:{}};$("chat").innerHTML="";askOb()}
-function askOb(){while(ob.i<STEPS.length&&STEPS[ob.i].skip&&STEPS[ob.i].skip(ob.p))ob.i++;
-  if(ob.i>=STEPS.length){finishOb();return}
-  const s=STEPS[ob.i];bubble("assistant",qText(s));showChips(s.chips||[])}
-function finishOb(){const p=ob.p;ob=null;p.start=p.weight;p.updated=Date.now();prof=p;saveProf();cloudPush("profile",prof);
-  try{localStorage.setItem("routine_bmr",String(baseOf(p)))}catch(e){}
-  $("bmr").value=baseOf(p);updTot();
-  const bm=bmrCalc(p),base=baseOf(p),prot=Math.round(p.weight*(p.goal==="gain"?2:1.8));
-  let t="Thanks "+p.name+"! Here is your starting plan.\n\n• Resting burn (BMR): "+bm+" kcal\n• Normal day burn without workout: about "+base+" kcal (set as your base burn)\n";
-  if(p.goal==="lose")t+="• Eat about "+Math.max(floorIn(p),base-500)+" kcal on a rest day. Workouts add to it, and the 'Left to eat' tile does that for you.\n• Goal: "+p.weight+" to "+p.target+" kg, about "+Math.max(1,Math.round(Math.abs(p.weight-p.target)/0.5))+" weeks at 0.5 kg per week\n";
-  else if(p.goal==="gain")t+="• Eat about "+(base+400)+" kcal on a rest day, more on workout days.\n• Goal: "+p.weight+" to "+p.target+" kg, about "+Math.max(1,Math.round(Math.abs(p.weight-p.target)/0.35))+" weeks at 0.35 kg per week\n";
-  else t+="• Eat about "+base+" kcal on a rest day to stay at "+p.weight+" kg.\n";
-  t+="• Protein: about "+prot+" g per day\n\nNow just fill your day in the Today tab. Calories for running, walking, steps and treadmill are calculated automatically. You can also tell me what you ate, like '1 roti and 1 katori sabzi', and I will estimate the calories.";
-  addMsg("assistant",t);showChips(QUICK);renderProf()}
-function renderProf(){const c=$("profCard");document.querySelector(".lg").textContent=prof&&prof.name&&prof.name.trim()?prof.name.trim()[0].toUpperCase():"U";if(!prof){c.hidden=true;renderGoal();return}c.hidden=false;
-  c.innerHTML="<h2>Your profile</h2><div class='row' style='justify-content:space-between'><div style='font-size:.9rem'><b>"+esc(prof.name)+"</b> · "+esc(prof.gender)+", "+esc(prof.age)+" y, "+esc(prof.height)+" cm, "+esc(prof.weight)+" kg<br><span style='color:var(--mute)'>Goal: "+(prof.goal==="lose"?"lose weight":prof.goal==="gain"?"gain weight":"maintain")+(prof.target?" to "+esc(prof.target)+" kg":"")+" · base burn "+baseOf(prof)+" kcal</span></div><button class='btn g s' id='editProf'>Edit profile</button></div>";
-  $("editProf").onclick=()=>{if(confirm("Answer the coach's questions again?"))startOb()};renderGoal()}
-function send(v){v=(v||$("chatIn").value).trim();if(!v)return;$("chatIn").value="";
-  if(ob){bubble("user",v);const s=STEPS[ob.i],r=s.parse(v);
-    if(r===null){bubble("assistant","Sorry, I did not get that. "+qText(s));return}
-    ob.p[s.k]=r;ob.i++;askOb();return}
-  coachAsk(v)}
-$("chatSend").onclick=()=>send();
-$("chatIn").addEventListener("keydown",e=>{if(e.key==="Enter")send()});
-(async function coachInit(){
-  if(!prof&&cfg.url)await cloudSync();
-  renderProf();
-  if(!prof){location.hash="coach";startOb();return}
-  chat.forEach(m=>bubble(m.role,m.content));
-  if(!chat.length)bubble("assistant","Hi "+prof.name+"! Ask me anything, or tell me what you ate.");
-  showChips(QUICK)})();
-
-/* ===================== goal ETA: updates as your data grows ===================== */
-const daysAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return fmt(d)};
-function goalEta(){
-  if(!prof||!prof.target||prof.goal==="maintain")return null;
-  const dir=prof.goal==="lose"?-1:1,cur=num(prof.weight),tgt=num(prof.target),start=num(prof.start)||cur;
-  const remaining=Math.round(dir*(tgt-cur)*10)/10;
-  const total=Math.abs(tgt-start)||Math.abs(tgt-cur)||1;
-  const progress=Math.max(0,Math.min(100,Math.round((1-Math.max(0,remaining)/total)*100)));
-  const planned=prof.goal==="lose"?0.5:0.35;
-  if(remaining<=0)return{done:true,cur,tgt,start,progress:100};
-  // 1) real weight trend (last 28 days, least squares, kg per week)
-  let wRate=null;const wk=Object.keys(entries).filter(k=>k>=daysAgo(28)&&num(entries[k].wt)).sort();
-  if(wk.length>=2){const t0=new Date(wk[0]+"T00:00").getTime(),pts=wk.map(k=>[(new Date(k+"T00:00").getTime()-t0)/86400000,num(entries[k].wt)]);
-    if(pts[pts.length-1][0]>=6){const n=pts.length,mx=pts.reduce((a,p)=>a+p[0],0)/n,my=pts.reduce((a,p)=>a+p[1],0)/n;
-      const sxx=pts.reduce((a,p)=>a+(p[0]-mx)**2,0),sxy=pts.reduce((a,p)=>a+(p[0]-mx)*(p[1]-my),0);wRate=sxx?sxy/sxx*7:null}}
-  // 2) calorie data (last 14 days, 7700 kcal is about 1 kg)
-  let cRate=null;const dk=Object.keys(entries).filter(k=>k>=daysAgo(14)&&totCal(entries[k])>0);
-  if(dk.length>=3)cRate=dk.reduce((a,k)=>a+net(entries[k]),0)/dk.length*7/7700;
-  const src=wRate!==null?"weight":cRate!==null?"calories":"plan",rate=src==="weight"?wRate:src==="calories"?cRate:dir*planned;
-  const toward=dir*rate;                       // kg per week in the right direction
-  const weeks=toward>0.02?Math.min(remaining/toward,104):null;
-  return{done:false,cur,tgt,start,progress,remaining,src,toward:Math.round(toward*100)/100,weeks:weeks&&Math.round(weeks*10)/10,planned,wRate:wRate!==null?Math.round(wRate*100)/100:null,cRate:cRate!==null?Math.round(cRate*100)/100:null,days:dk.length,weights:wk.length}}
-function renderGoal(){
-  const g=goalEta(),boxes=document.querySelectorAll(".goalbox");
-  boxes.forEach(b=>{
-    if(!prof){b.hidden=true;return}
-    b.hidden=false;
-    if(!g){b.innerHTML="<h2>Goal progress</h2><div class='brk'>Your goal is to maintain "+esc(prof.weight)+" kg. Keep your net calories close to zero.</div>";return}
-    if(g.done){b.innerHTML="<h2>Goal progress</h2><div class='gpbar'><i style='width:100%'></i></div><div class='brk' style='margin-top:12px'>Goal reached: you are at "+g.cur+" kg and your target is "+g.tgt+" kg. Set a new goal in the Coach tab, or switch to maintain.</div>";return}
-    const eta=g.weeks?new Date(Date.now()+g.weeks*7*86400000).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}):"";
-    const T=(c,l,v,u)=>"<div class='tile "+c+"'><span>"+l+"</span><b>"+v+"</b><small>"+u+"</small></div>";
-    const pace=g.toward>0?g.toward+" kg/week":"not yet";
-    const src=g.src==="weight"?"your logged body weight ("+g.weights+" entries)":g.src==="calories"?"your calorie data ("+g.days+" days)":"the standard plan pace ("+g.planned+" kg/week). Log 3+ days of food and exercise to make it personal";
-    let msg;
-    if(!g.weeks)msg="At your current numbers you are not moving toward the goal yet. "+(prof.goal==="lose"?"Eat a little less or move a little more.":"Eat a little more.");
-    else if(g.src==="plan")msg="";
-    else msg=g.toward>=g.planned*0.8?"You are on track.":"Slower than the planned "+g.planned+" kg/week.";
-    b.innerHTML="<h2>Goal progress</h2><div class='gpbar'><i style='width:"+g.progress+"%'></i></div>"
-     +"<div class='gpl'><span>Start "+g.start+" kg</span><b>"+g.cur+" kg now ("+g.progress+"%)</b><span>Goal "+g.tgt+" kg</span></div>"
-     +"<div class='tiles'>"+T("","Remaining",g.remaining,"kg")+T(g.weeks?"burn":"eat","Estimated time",g.weeks?"~"+Math.max(1,Math.round(g.weeks)):"–","weeks")+T("","Current pace",g.toward>0?g.toward:"–",g.toward>0?"kg/week":"")+"</div>"
-     +"<div class='brk'>"+(eta?"Reaching your goal around <b>"+eta+"</b>. ":"")+msg+"</div>"
-     +"<div class='brk'>Based on "+src+"."+(g.wRate!==null&&g.cRate!==null?" Weight trend: "+g.wRate+" kg/week, calorie data: "+g.cRate+" kg/week.":"")+(g.weights<2?" Enter your body weight once a week (Daily calories card) for the most accurate estimate.":"")+"</div>"})}
-
-entries=normObj(lsLoad());fill(today());go();cloudSync();
+if(!window.isSecureContext){mic.hidden=true;lb.hidden=true;heard.textContent='Open the https:// link, not a saved file';}
+else if(!SR){mic.hidden=true;lb.hidden=true;heard.textContent='Voice needs Chrome';}
+else{
+  r=new SR();r.lang=lang;r.interimResults=false;r.maxAlternatives=5;
+  r.onstart=()=>{mic.classList.add('live');heard.textContent='Listening…';};
+  r.onend=()=>mic.classList.remove('live');
+  r.onresult=async e=>{
+    const alts=[...e.results[0]].map(a=>a.transcript);
+    heard.textContent='Heard: '+alts[0];
+    for(const a of alts){
+      const cmds=parse(a);
+      if(cmds){
+        if(!ready){heard.textContent+=' (connect first)';return;}
+        for(const c of cmds)await send(c);
+        return;
+      }
+    }
+    heard.textContent='Not understood: "'+alts[0]+'". Try "fan on" or "sab band"';
+  };
+  r.onerror=e=>{heard.textContent=MSG[e.error]||('Mic error: '+e.error);};
+  mic.onclick=()=>{try{r.start();}catch(_){r.stop();}};
+}
 </script>
 </body>
 </html>
